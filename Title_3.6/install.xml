@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:AHPT</id>
+	<name>Additional Home Page Title</name>
+	<version>3.6</version>
+
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="after"><![CDATA[array('text', 'meta_keywords', 'size' => 50),]]></search>
+			<add><![CDATA[
+			array('text', 'title_forum', 'size' => 64),
+			array('text', 'title_portal', 'size' => 64),]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['runic_ahpt'],]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/BoardIndex.php">
+		<operation>
+			<search position="replace"><![CDATA[$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);]]></search>
+			<add><![CDATA[$context['page_title'] = $context['forum_name'] . ' - '. (!empty($modSettings['title_forum']) ? $modSettings['title_forum'] : 'Index') . ' ';]]></add>
+		</operation>
+	</file>
+		
+	<file name="$sourcedir/PortalMain.php" error="skip">
+		<operation>
+			<search position="replace"><![CDATA[$context['page_title'] = $context['forum_name'];]]></search>
+			<add><![CDATA[$context['page_title'] = $context['forum_name'] . ' - '. (!empty($modSettings['title_portal']) ? $modSettings['title_portal'] : $modSettings['title_forum']) . ' ';]]></add>
+		</operation>
+		
+		<operation>
+			<search position="replace"><![CDATA[function sportal_main()
+{
+	global $smcFunc, $context, $sourcedir;]]></search>
+			<add><![CDATA[function sportal_main()
+{
+	global $smcFunc, $context, $modSettings, $sourcedir;]]></add>
+		</operation>
+
+		</file>
+	
+	
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['title_forum'] = 'Enter your additional <i>Forum Title</i>';
+$txt['title_portal'] = 'Enter your additional <i>Portal Title</i><br /><span class="smalltext">If left blank, forum title will be used</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['title_forum'] = 'Enter your additional <i>Forum Title</i>';
+$txt['title_portal'] = 'Enter your additional <i>Portal Title</i><br /><span class="smalltext">If left blank, forum title will be used</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.portuguese_pt.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+$txt['title_forum'] = 'Digite seu adicional <i>T&iacute;tulo do F&oacute;rum</i>';
+$txt['title_portal'] = 'Digite seu adicional <i>T&iacute;tulo do Portal</i><br /><span class="smalltext">Se deixado em branco, o t&iacute;tulo f&oacute;rum ser&aacute; utilizado</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+    <file name="$languagedir/Modifications.portuguese_pt-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+$txt['title_forum'] = 'Digite seu adicional <i>T&iacute;tulo do F&oacute;rum</i>';
+$txt['title_portal'] = 'Digite seu adicional <i>T&iacute;tulo do Portal</i><br /><span class="smalltext">Se deixado em branco, o t&iacute;tulo f&oacute;rum ser&aacute; utilizado</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+    <file name="$languagedir/Modifications.portuguese_brazilian.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+$txt['title_forum'] = 'Digite seu adicional <i>T&iacute;tulo do F&oacute;rum</i>';
+$txt['title_portal'] = 'Digite seu adicional <i>T&iacute;tulo do Portal</i><br /><span class="smalltext">Se deixado em branco, o t&iacute;tulo f&oacute;rum ser&aacute; utilizado</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+    <file name="$languagedir/Modifications.portuguese_brazilian-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+$txt['title_forum'] = 'Digite seu adicional <i>T&iacute;tulo do F&oacute;rum</i>';
+$txt['title_portal'] = 'Digite seu adicional <i>T&iacute;tulo do Portal</i><br /><span class="smalltext">Se deixado em branco, o t&iacute;tulo f&oacute;rum ser&aacute; utilizado</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+	<file name="$languagedir/Modifications.dutch.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['title_forum'] = 'Additionele forumtitel';
+$txt['title_portal'] = 'Additionele titel voor het portaal<br /><span class="smalltext">Laat dit veld leeg wanneer je de additionele forumtitel wilt gebruiken</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.dutch-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['title_forum'] = 'Additionele forumtitel';
+$txt['title_portal'] = 'Additionele titel voor het portaal<br /><span class="smalltext">Laat dit veld leeg wanneer je de additionele forumtitel wilt gebruiken</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['title_forum'] = 'Enter your additional <i>Forum Title</i>';
+$txt['title_portal'] = 'Enter your additional <i>Portal Title</i><br /><span class="smalltext">If left blank, forum title will be used</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['title_forum'] = 'Enter your additional <i>Forum Title</i>';
+$txt['title_portal'] = 'Enter your additional <i>Portal Title</i><br /><span class="smalltext">If left blank, forum title will be used</span>';
+// Mod Copyright, this line must not be translated
+$txt['runic_ahpt'] = 'Additional Home Page Title Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:TopicDescriptions</id>
+	<version>1.3</version>
+   	
+	<file name="$languagedir/Errors.english.php">
+		<operation>
+			<search position="end" />
+
+            		<add><![CDATA[
+	$txt['statuses_post_error_short'] = 'Your message is too short, please try again.';
+]]></add>
+        	</operation>
+   	</file>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+            		<add><![CDATA[
+    $txt['topic_descriptions'] = 'Topic Descriptions';
+    $txt['topic_description'] = 'Description';
+    $txt['topic_descriptions_maxlen'] = 'Set max length of descriptions<div class="smalltext">Default: 25</div>';
+    $txt['topic_descriptions_enable'] = 'Enable Topic Descriptions?';
+    $txt['topic_descriptions_post_desc'] = 'Description (<i>Optional</i>):';
+    $txt['topic_descriptions_boards'] = 'Id of board(s) not to enable descriptions in<div class="smalltext">Use comma-seperated values!</div>';
+	$txt['topic_descriptions_topics'] = 'Enable the description in the topic?';
+	$txt['td_copy'] = 'Topic Descriptions Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        	</operation>
+   	</file>
+	<file name="$languagedir/Modifications.english-utf8.php"  error="skip">
+		<operation>
+			<search position="end" />
+            		<add><![CDATA[
+    $txt['topic_descriptions'] = 'Topic Descriptions';
+    $txt['topic_description'] = 'Description';
+    $txt['topic_descriptions_maxlen'] = 'Set max length of descriptions<div class="smalltext">Default: 25</div>';
+    $txt['topic_descriptions_enable'] = 'Enable Topic Descriptions?';
+    $txt['topic_descriptions_post_desc'] = 'Description (<i>Optional</i>):';
+    $txt['topic_descriptions_boards'] = 'Id of board(s) not to enable descriptions in<div class="smalltext">Use comma-seperated values!</div>';
+	$txt['topic_descriptions_topics'] = 'Enable the description in the topic?';
+	$txt['td_copy'] = 'Topic Descriptions Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        	</operation>
+   	</file>
+	<file name="$languagedir/Modifications.english_british.php"  error="skip">
+		<operation>
+			<search position="end" />
+            		<add><![CDATA[
+    $txt['topic_descriptions'] = 'Topic Descriptions';
+    $txt['topic_description'] = 'Description';
+    $txt['topic_descriptions_maxlen'] = 'Set max length of descriptions<div class="smalltext">Default: 25</div>';
+    $txt['topic_descriptions_enable'] = 'Enable Topic Descriptions?';
+    $txt['topic_descriptions_post_desc'] = 'Description (<i>Optional</i>):';
+    $txt['topic_descriptions_boards'] = 'Id of board(s) not to enable descriptions in<div class="smalltext">Use comma-seperated values!</div>';
+	$txt['topic_descriptions_topics'] = 'Enable the description in the topic?';
+	$txt['td_copy'] = 'Topic Descriptions Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        	</operation>
+   	</file>
+		<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+            		<add><![CDATA[
+    $txt['topic_descriptions'] = 'Topic Descriptions';
+    $txt['topic_description'] = 'Description';
+    $txt['topic_descriptions_maxlen'] = 'Set max length of descriptions<div class="smalltext">Default: 25</div>';
+    $txt['topic_descriptions_enable'] = 'Enable Topic Descriptions?';
+    $txt['topic_descriptions_post_desc'] = 'Description (<i>Optional</i>):';
+    $txt['topic_descriptions_boards'] = 'Id of board(s) not to enable descriptions in<div class="smalltext">Use comma-seperated values!</div>';
+	$txt['topic_descriptions_topics'] = 'Enable the description in the topic?';
+	$txt['td_copy'] = 'Topic Descriptions Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        	</operation>
+   	</file>
+</modification>

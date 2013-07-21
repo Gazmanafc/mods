@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Arantor:BuddyPage</id>
+	<version>1.2</version>
+	
+	<file name="$boarddir/index.php">
+		<operation>
+			<search position="after"><![CDATA[		'calendar' => array('Calendar.php', 'CalendarMain'),]]></search>
+			<add><![CDATA[		'buddypage' => array('BuddyPage.php', 'BuddyPageMain'),
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/ManagePermissions.php">
+		<operation>
+			<search position="before"><![CDATA[			'profile_remote_avatar' => array(false, 'profile', 'use_avatar'),]]></search>
+			<add><![CDATA[
+			'user_buddylist' => array(false, 'buddylist', 'buddylist'),
+			'user_buddypage' => array(false, 'buddylist', 'buddylist'),
+			'user_buddy_seeothers' => array(false, 'buddylist', 'buddylist'),
+			'user_buddy_seecommon' => array(false, 'buddylist', 'buddylist'),]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Profile-View.php">
+		<operation>
+			<search position="replace"><![CDATA['can_have_buddy' => allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']),]]></search>
+			<add><![CDATA['can_have_buddy' => allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']) && allowedTo('user_buddylist'),]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Subs.php">
+		<operation>
+			<search position="replace"><![CDATA[			),
+			'pm' => array(]]></search>
+			<add><![CDATA[
+			),
+			'buddypage' => array(
+				'title' => $txt['buddypage'],
+				'href' => $scripturl . '?action=buddypage',
+				'show' => $context['show_buddypage'],
+				'sub_buttons' => array(
+				),
+			),
+			'pm' => array(]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[$context['allow_pm'] = allowedTo('pm_read');]]></search>
+			<add><![CDATA[
+	$context['show_buddypage'] = allowedTo('user_buddypage');]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Subs-Members.php">
+		<operation>
+			<search position="before"><![CDATA[isAllowedTo('profile_identity_own');]]></search>
+			<add><![CDATA[
+	isAllowedTo('user_buddylist');]]></add>
+		</operation>
+	</file>
+		<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['runic_buddy'],]]></add>
+		</operation>
+	</file>
+</modification>

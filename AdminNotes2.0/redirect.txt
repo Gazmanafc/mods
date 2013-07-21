@@ -1,0 +1,7 @@
+<strong style="font-size: 13pt;">Installation Complete</strong>
+<hr />
+<p>Admin Notes has been successfully installed.</p>
+<p>Visit the <a href="http://www.simplemachines.org/community/index.php?topic=308803.0" target="_blank">Admin Notes Mod topic</a> for support or to leave feedback.</p>
+<p>Remember to visit <a href="http://www.bryandeakin.com" target="_blank">BryanDeakin.com</a> for New Mods and Updates</p>
+<p>I hope you enjoy this mod!</p>
+<p>- Runic</a></p>

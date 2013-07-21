@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:Aion_Syndication</id>
+	<version>2.0</version>
+	
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['bbc_code_aion_item'] = 'Insert Aion item';
+$txt['bbc_code_aion_spell'] = 'Insert Aion spell';
+$txt['bbc_code_aion_quest'] = 'Insert Aion quest';
+$txt['bbc_code_aion_npc'] = 'Insert Aion NPC';
+$txt['bbc_code_aion_recipe'] = 'Insert Aion recipe';
+$txt['runic_aion'] = 'Aion Syndication Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['bbc_code_aion_item'] = 'Insert Aion item';
+$txt['bbc_code_aion_spell'] = 'Insert Aion spell';
+$txt['bbc_code_aion_quest'] = 'Insert Aion quest';
+$txt['bbc_code_aion_npc'] = 'Insert Aion NPC';
+$txt['bbc_code_aion_recipe'] = 'Insert Aion recipe';
+$txt['runic_aion'] = 'Aion Syndication Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['bbc_code_aion_item'] = 'Insert Aion item';
+$txt['bbc_code_aion_spell'] = 'Insert Aion spell';
+$txt['bbc_code_aion_quest'] = 'Insert Aion quest';
+$txt['bbc_code_aion_npc'] = 'Insert Aion NPC';
+$txt['bbc_code_aion_recipe'] = 'Insert Aion recipe';
+$txt['runic_aion'] = 'Aion Syndication Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['bbc_code_aion_item'] = 'Insert Aion item';
+$txt['bbc_code_aion_spell'] = 'Insert Aion spell';
+$txt['bbc_code_aion_quest'] = 'Insert Aion quest';
+$txt['bbc_code_aion_npc'] = 'Insert Aion NPC';
+$txt['bbc_code_aion_recipe'] = 'Insert Aion recipe';
+$txt['runic_aion'] = 'Aion Syndication Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	
+</modification>

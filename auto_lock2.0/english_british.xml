@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://dev.smfchat.com/xsl/modification.xsl"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:AutoLock</id>
+	<version>2.0</version>
+
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['autoLock_title'] = 'Auto Lock';	
+$txt['autoLock_desc'] = 'For each board, please add the number of days since the last post in order to trigger a lock (0 to disable)';
+$txt['autoLock_sticky'] = 'Should sticky topics also be locked if they are older that the cut-off?<br /><span class="smalltext">Sticky topics are <strong>not</strong> locked automatically unless this is ticked.</span>';
+$txt['runic_al'] = 'Auto Lock Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['autoLock_title'] = 'Auto Lock';	
+$txt['autoLock_desc'] = 'For each board, please add the number of days since the last post in order to trigger a lock (0 to disable)';
+$txt['autoLock_sticky'] = 'Should sticky topics also be locked if they are older that the cut-off?<br /><span class="smalltext">Sticky topics are <strong>not</strong> locked automatically unless this is ticked.</span>';
+$txt['runic_al'] = 'Auto Lock Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/ManageScheduledTasks_british.english.php" error="skip">
+		<operation>
+			<search position="before"><![CDATA[$txt['scheduled_task_desc_birthdayemails'] = 'Sends out emails wishing members a happy birthday.';]]></search>
+			<add><![CDATA[
+$txt['scheduled_task_autoLock'] = 'Auto Lock Old Topics';
+$txt['scheduled_task_desc_autoLock'] = 'Locks older topics that have not been replied to.';]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/ManageScheduledTasks_british.english-utf8.php" error="skip">
+		<operation>
+			<search position="before"><![CDATA[$txt['scheduled_task_desc_birthdayemails'] = 'Sends out emails wishing members a happy birthday.';]]></search>
+			<add><![CDATA[
+$txt['scheduled_task_autoLock'] = 'Auto Lock Old Topics';
+$txt['scheduled_task_desc_autoLock'] = 'Locks older topics that have not been replied to.';]]></add>
+		</operation>
+	</file>
+</modification>

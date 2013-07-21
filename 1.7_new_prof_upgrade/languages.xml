@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:new_profile_layout</id>
+	<version>1.7</version>
+		<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// s-ace mods
+$txt['pr_info'] = 'Personal info';
+$txt['ct_info'] = 'Contact info';
+$txt['avtr'] = 'User Avatar';
+$txt['p_pm'] = 'PM:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// s-ace mods
+$txt['pr_info'] = 'Personal info';
+$txt['ct_info'] = 'Contact info';
+$txt['avtr'] = 'User Avatar';
+$txt['p_pm'] = 'PM:';]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// s-ace mods
+$txt['pr_info'] = 'Personal info';
+$txt['ct_info'] = 'Contact info';
+$txt['avtr'] = 'User Avatar';
+$txt['p_pm'] = 'PM:';]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// s-ace mods
+$txt['pr_info'] = 'Personal info';
+$txt['ct_info'] = 'Contact info';
+$txt['avtr'] = 'User Avatar';
+$txt['p_pm'] = 'PM:';]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.turkish.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = 'Kişisel bilgi';
+$txt['ct_info'] = 'İletişim bilgisi';
+$txt['avtr'] = 'Kullanıcı Avatarı';
+$txt['p_pm'] = 'PM:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.spanish.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = 'Información Personal';
+$txt['ct_info'] = 'Información de Contacto';
+$txt['avtr'] = 'Avatar del Usuario';
+$txt['p_pm'] = 'PM:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.dutch.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = 'Personele informatie';
+$txt['ct_info'] = 'Contact informatie';
+$txt['avtr'] = 'Gebruikers Avatar';
+$txt['p_pm'] = 'PB (Prive Bericht):';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.arabic.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = 'المعلومات الشخصية';
+$txt['ct_info'] = 'معلومات الإتصال';
+$txt['avtr'] = 'الصورة الشخصية';
+$txt['p_pm'] = 'الرسائل الشخصية:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.portuguese_pt.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = 'Informação Pessoal';
+$txt['ct_info'] = 'Informação de Contacto';
+$txt['avtr'] = 'Avatar do Membro';
+$txt['p_pm'] = 'MP:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.portuguese_brazilian.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = 'Informação Pessoal';
+$txt['ct_info'] = 'Informação de Contato';
+$txt['avtr'] = 'Avatar do Membro';
+$txt['p_pm'] = 'MP:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.arabic-utf8.php" error="skip" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = 'المعلومات الشخصية';
+$txt['ct_info'] = 'معلومات الإتصال';
+$txt['avtr'] = 'الصورة الشخصية';
+$txt['p_pm'] = 'الرسائل الشخصية:';
+]]></add>
+		</operation>
+	</file>
+		<file name="$languagedir/Modifications.french.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// s-ace mods
+$txt['pr_info'] = 'infos personnelles';
+$txt['ct_info'] = 'Contact info';
+$txt['avtr'] = 'Utilisateur Avatar';
+$txt['p_pm'] = 'PM:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.german.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// s-ace mods   
+$txt['pr_info'] = 'Persönliche Informationen';
+$txt['ct_info'] = 'Kontakt Info';
+$txt['avtr'] = 'Benutzerfoto';
+$txt['p_pm'] = 'PM:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.greek.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// s-ace mods   
+$txt['pr_info'] = 'Προσωπικές Πληροφορίες';
+$txt['ct_info'] Στοιχεία επικοινωνίας = ';
+$txt['avtr'] = 'Εγγραφή Χρήστη';
+$txt['p_pm'] = 'PM:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.hungarian.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// s-ace mods
+$txt['pr_info'] = 'Személyes adatok';
+$txt['ct_info'] = 'Kapcsolat info';
+$txt['avtr'] = 'Avatar';
+$txt['p_pm'] = 'PM:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.italian.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = 'Dati personali';
+$txt['ct_info'] = 'Contatto';
+$txt['avtr'] = 'User Avatar';
+$txt['p_pm'] = 'PM:';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.polish.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['pr_info'] = "Informacje osobiste";
+$txt['ct_info'] = "Informacje kontaktowe";
+$txt['avtr'] = "Awatar";
+$txt['p_pm'] = "PM";
+]]></add>
+		</operation>
+	</file>
+</modification>

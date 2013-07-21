@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+  <name>Hayley Westenra Avatars</name>
+  <id>runic:hayley</id>
+  <version>1.0</version>
+  <type>avatar</type>
+  <install for="1.0.0 - 1.0.99, 1.1.0 - 1.1.99, 2.0 - 2.0.99"> 
+    <require-dir name="Hayley" destination="$avatardir" />
+  </install>
+  <uninstall for="1.0.0 - 1.0.99, 1.1.0 - 1.1.99, 2.0 - 2.0.99">
+    <remove-dir name="$avatardir/Hayley" />
+  </uninstall>
+</package-info>

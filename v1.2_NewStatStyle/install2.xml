@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<!-- This information needs to be the same as that in the package-info.xml. -->
+	<id>runic:nbss</id>
+	<version>1.2</version>
+
+	<file name="$themedir/BoardIndex.template.php">
+		<operation>
+
+			<search position="replace"><![CDATA[// Show some basic information about the number of posts, etc.
+					echo '
+					</td>
+					<td class="stats windowbg">
+						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'], ' <br />
+						', $board['is_redirect'] ? '' : comma_format($board['topics']) . ' ' . $txt['board_topics'], '
+						</p>
+					</td>
+					<td class="lastpost">';
+
+				/* The board's and children's 'last_post's have:
+				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
+				link, href, subject, start (where they should go for the first unread post.),
+				and member. (which has id, name, link, href, username in it.) */
+				if (!empty($board['last_post']['id']))
+					echo '
+						<p><strong>', $txt['last_post'], '</strong>  ', $txt['by'], ' ', $board['last_post']['member']['link'] , '<br />
+						', $txt['in'], ' ', $board['last_post']['link'], '<br />
+						', $txt['on'], ' ', $board['last_post']['time'],'
+						</p>';
+				echo '
+					</td>
+				</tr>';]]></search>
+
+			<add><![CDATA[// Show some basic information about the number of posts, etc.
+					echo '
+					<td class="lastpost">';
+
+				/* The board's and children's 'last_post's have:
+				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
+				link, href, subject, start (where they should go for the first unread post.),
+				and member. (which has id, name, link, href, username in it.) */
+				if (!empty($board['last_post']['id']))
+					echo '
+						<p><strong>', $txt['last_post'], '</strong>  : ', $board['last_post']['link'] , '<br />
+						', $txt['by'], ' <b>', $board['last_post']['member']['link'], ' </b> ', $txt['on'], ' ', $board['last_post']['time'], '<br />
+
+						</p>';
+				echo '
+				<div style="padding-top: 3px;"><table class="tbody" width="100%" class="tborder"><tr valign="bottom"><td align="center" class="stats windowbg">', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'], ' 
+						</td>';
+				if (!empty($board['last_post']['id']))
+					echo '
+					<td align="center" class="stats windowbg">', $board['is_redirect'] ? '' : comma_format($board['topics']) . ' ' . $txt['board_topics'], '
+						
+						</td>';
+				echo '		</tr></table></div>
+					</td></tr>';]]></add>
+		</operation>
+	</file>
+</modification>

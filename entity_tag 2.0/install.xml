@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:Entity_BBCode</id>
+	<version>2.0</version>
+	
+	<file name="$sourcedir/Subs-Editor.php">
+		<operation>
+			<search position="before"><![CDATA[			array(
+				'image' => 'hr',
+				'code' => 'hr',
+				'before' => '[hr]',
+				'description' => $txt['horizontal_rule']
+			),
+]]></search>
+			<add><![CDATA[			array(),
+			array(
+				'image' => 'ent',
+				'code' => 'ent',
+				'before' => '[ent]',
+				'after' => '[/ent]',
+				'description' => $txt['bbc_code_ent']
+			),
+			array(
+				'image' => 'entn',
+				'code' => 'entn',
+				'before' => '[entn]',
+				'after' => '[/entn]',
+				'description' => $txt['bbc_code_entn']
+			),
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['entity_copy'],]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Subs.php">
+		<operation>
+			<search position="after"><![CDATA[			array(
+				'tag' => 'ftp',]]></search>
+			<add><![CDATA[			array(
+				'tag' => 'ent',
+				'type' => 'unparsed_content',
+				'content' => '$1',
+				'validate' => create_function('&$tag, &$data, $disabled', 'if(preg_match("/^(sup[123e]?|[lurdh][aA]rr|[aAeEiIoOuU](grave|circ)|[aAeEiIoOuUyY](acute|uml)|[aAnNoO]tilde|nbsp|ixcel|cent|pound|curren|e[nm]sp|[dD]agger|[nm]dash|yen|brvbar|sect|uml|copy|ordf|not|shy|reg|macr|deg|iquest|[aA]lpha|[bBzZ]eta|[gG]amma|[dD]elta|[eEuU]psilon|[eE]ta|[tT]heta|[iI]ota|[kK]appa|[lL]ambda|[mMnN]u|[npPxX]i|[oO]micron|[rR]ho|[sS]igma|sigmaf|[tT]au|[cCpP]hi|[pP]si|[oO]mega|[lr][asd]quo|[ao]elig|[AO]ELIG|[pP]rime|[ngl]e|o?times|[cC]?cedil|[oO]slash|ETH|THORN|eth|thorn|szlig|divide|fnof|thetasym|[aA]ring|upsih|piv|bull|hellip|oline|frasl|weierp|image|real|trade|alefsym|crarr|forall|part|exist|empty|nabla|isin|notin|prod|sum|minus|radic|prop|infin|ang|and|or|cap|cup|int|there4|sim|cong|asymp|equiv|sub|nsub|sube|oplus|perp|sdot|[lr]ceil|[lr]floor|[lr]ang|loz|spades|clubs|hearts|diams|amp|[lg]t|[sS]caron|circ|tilde|thinsp|zwnj|zwj|lrm|rlm|permil|euro|[lr]saquo|sbquo|bdquo)$/", $data)) $tag[\'content\'] = "&" . $data . ";";'),
+			),
+			array(
+				'tag' => 'entn',
+				'type' => 'unparsed_content',
+				'content' => '$1',
+				'validate' => create_function('&$tag, &$data, $disabled', 'if(preg_match("/^[0-9]{3,6}$/", $data) && (int) $data > 126) $tag[\'content\'] = "&#" . $data . ";";'),
+			),
+]]></add>
+		</operation>
+	</file>
+
+</modification>

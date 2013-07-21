@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:fakeonlinetime</id>
+	<name>Fake Online Time</name>
+	<version>2.0</version>
+	<type>modification</type>
+
+	<!--// Install for SMF 2.0.x versions only //-->
+	<install for="2.0 - 2.0.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<modification type="file">2x.xml</modification>
+	</install>
+	
+	<!--// Uninstall for SMF 2.0.x versions only //-->
+	<uninstall for="2.0 - 2.0.99">
+		<readme type="inline">This will uninstall the Bougus online Time mod.</readme>
+		<modification type="file" reverse="true">2x.xml</modification>
+	</uninstall>
+</package-info>

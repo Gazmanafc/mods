@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:NewSome/newnone</id>
+	<name>New Some/New None</name>
+	<version>1.3</version>
+	<type>modification</type>
+	<install for="2.0 RC3, 2.0 RC4, 2.0 RC5, 2.0 - 2.0.99">
+	<readme type="file" parsebbc="true">readme.txt</readme>
+	<modification>install.xml</modification>
+	</install>
+	<uninstall for="2.0 RC3, 2.0 RC4, 2.0 RC5, 2.0 - 2.0.99">
+	<modification reverse="true">install.xml</modification>
+	</uninstall>
+</package-info>

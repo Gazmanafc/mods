@@ -1,0 +1,280 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:LogKarmaActs</id>
+	<version>2.0</version>
+	<file name="$sourcedir/Admin.php">
+		<operation>
+			<search position="before"><![CDATA['pruning' => array($txt['pruning_title'], 'admin_forum'),
+]]></search>
+			<add><![CDATA[						'karma' => array($txt['karma_log'], 'admin_forum'),
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA['pruning' => array('ManageSettings.php', 'ModifyPruningSettings'),
+]]></search>
+			<add><![CDATA[		'karma' => array('Karma.php', 'LogKarmaActs'),
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA['pruning' => array(
+				'description' => $txt['pruning_log_desc'],
+			),
+]]></search>
+			<add><![CDATA[			'karma' => array(
+				'description' => $txt['karma_log_desc'],
+			),
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Karma.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// Main Log Function.
+			
+function LogKarmaActs()
+{
+	global $txt, $sourcedir, $scripturl, $context, $smcFunc;
+
+	isAllowedTo('admin_forum');
+	
+	$context['page_title'] = $txt['karma_log'];
+	
+	if (!empty($_POST['delete']) && !empty($_POST['remove']) && is_array($_POST['remove']))
+	{
+		checkSession();
+
+		foreach ($_POST['remove'] as $index => $log_time)
+			$_POST['remove'][(int) $index] = (int) $log_time;
+
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}log_karma_actions
+			WHERE id_karma IN ({array_int:karma_list})',
+			array(
+				'karma_list' => $_POST['remove'],
+			)
+		);
+
+		redirectexit($scripturl . '?action=admin;area=logs;sa=karma');
+	}
+	
+	$listOptions = array(
+		'id' => 'karma_list',
+		'items_per_page' => 20,
+		'title' => $txt['karma_log'],
+		'base_href' => $scripturl . '?action=admin;area=viewkarmalog',
+		'no_items_label' => $txt['karma_no_entries'],
+		'get_items' => array(
+			'function' => 'list_getKarma',
+		),
+		'get_count' => array(
+			'function' => 'list_getNumKarmaLogEntries',
+		),
+		'columns' => array(
+			'id_karma' => array(
+				'header' => array(
+					'value' => $txt['karma_id'],
+				),
+				'data' => array(
+					'db' => 'id',
+					'class' => 'smalltext',
+				),
+			),
+			'type' => array(
+				'header' => array(
+					'value' => $txt['karma_type'],
+				),
+				'data' => array(
+					'db' => 'action',
+					'class' => 'smalltext',
+				),
+			),
+			'executing' => array(
+				'header' => array(
+					'value' => $txt['karma_executor'],
+				),
+				'data' => array(
+					'db' => 'executor',
+					'class' => 'smalltext',
+				),
+			),
+			'target' => array(
+				'header' => array(
+					'value' => $txt['karma_target'],
+				),
+				'data' => array(
+					'db' => 'target',
+					'class' => 'smalltext',
+				),
+			),
+			'time' => array(
+				'header' => array(
+					'value' => $txt['karma_Added'],
+				),
+				'data' => array(
+					'db' => 'time',
+					'class' => 'smalltext',
+				),
+			),
+			'check' => array(
+				'header' => array(
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+				),
+				'data' => array(
+					'sprintf' => array(
+						'format' => '<input type="checkbox" name="remove[]" value="%1$d" class="input_check" />',
+						'params' => array(
+							'id' => false,
+						),
+					),
+					'style' => 'text-align: center',
+				),
+			),
+		),
+		'form' => array(
+			'href' => $scripturl . '?action=admin;area=logs;sa=karma',
+		),
+		'additional_rows' => array(
+			array(
+				'position' => 'below_table_data',
+				'value' => '<input type="submit" name="delete" value="' . $txt['karma_delete'] . '" onclick="return confirm(\'' . $txt['karma_delete_confirm'] . '\');" class="button_submit" />',
+				'class' => 'titlebg',
+				'style' => 'text-align: right;',
+			),
+		),
+	);
+
+	require_once($sourcedir . '/Subs-List.php');
+	createList($listOptions);
+
+	$context['sub_template'] = 'show_list';
+	$context['default_list'] = 'karma_list';
+}
+
+function list_getKarma($start, $items_per_page, $sort)
+{
+	global $smcFunc;
+	
+	// Get the data from the Karma log.
+	$result = $smcFunc['db_query']('', '
+        SELECT lka.id_karma, lka.id_karma, lka.id_target, lka.id_executor, lka.log_time, lka.action, mem1.real_name AS id_target, mem2.real_name AS id_executor
+        FROM {db_prefix}log_karma_actions AS lka, {db_prefix}members AS mem1, {db_prefix}members AS mem2
+        WHERE mem1.id_member = lka.id_target
+      	AND mem2.id_member = lka.id_executor
+   		ORDER BY log_time DESC',
+        array(
+		)
+    );
+
+	$return = array();
+	
+	// Build an array to return karama action data.
+	while ($row = $smcFunc['db_fetch_assoc']($result))
+	{
+		$return[] = array(
+			'id' => $row['id_karma'],
+			'executor' => $row['id_executor'],
+			'target' => $row['id_target'],
+			'action' => $row['action'] == 1 ? 'applauds' : 'smites',
+			'time' => timeformat($row['log_time'])
+		);
+	}
+
+	$smcFunc['db_free_result']($result);
+	
+	return $return;
+}
+
+function list_getNumKarmaLogEntries()
+{
+	global $smcFunc;
+
+	$result = $smcFunc['db_query']('', '
+		SELECT COUNT(*)
+		FROM {db_prefix}log_karma_actions AS lka',
+		array(
+		)
+	);
+	list ($num_entries) = $smcFunc['db_fetch_row']($result);
+	$smcFunc['db_free_result']($result);
+
+	return $num_entries;
+}
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+		// Change by one.
+		updateMemberData($_REQUEST['uid'], array($dir == 1 ? 'karma_good' : 'karma_bad' => '+'));]]></search>
+			<add><![CDATA[
+		// and into the long term log...
+		$smcFunc['db_insert']('insert',
+            '{db_prefix}log_karma_actions',
+            array(
+                'id_target' => 'int', 'id_executor' => 'int', 'log_time' => 'int', 'action' => 'int',
+            ),
+            array(
+                (int)$_REQUEST['uid'], (int)$context['user']['id'], time(), (int)$dir,
+            ),
+            array('id_karma')
+        );
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/ManageMaintenance.php">
+		<operation>
+			<search position="after"><![CDATA[	// Last but not least, the search logs!]]></search>
+			<add><![CDATA[	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}log_karma_actions');
+
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['runic_karma'],]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// Log Karma Actions.
+$txt['karma_id'] = 'ID Karma';
+$txt['karma_log'] = 'Karma Log';
+$txt['view_karma_log'] = 'View Karma Log';
+$txt['karma_no_entries'] = 'There are currently no karma log entries.';
+$txt['karma_type'] = 'Type';
+$txt['karma_executor'] = 'Executing Member';
+$txt['karma_target'] = 'Target Member';
+$txt['karma_Added'] = 'Added';
+$txt['karma_delete'] = 'Delete Selected Entries';
+$txt['karma_delete_confirm'] = 'Are you sure you want to remove the selected log entries?';
+$txt['karma_log_desc'] = 'View logged Karma actions performed by forum members.';
+$txt['runic_karma'] = 'Log Karma Actions Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// Log Karma Actions.
+$txt['karma_id'] = 'ID Karma';
+$txt['karma_log'] = 'Karma Log';
+$txt['view_karma_log'] = 'View Karma Log';
+$txt['karma_no_entries'] = 'There are currently no karma log entries.';
+$txt['karma_type'] = 'Type';
+$txt['karma_executor'] = 'Executing Member';
+$txt['karma_target'] = 'Target Member';
+$txt['karma_Added'] = 'Added';
+$txt['karma_delete'] = 'Delete Selected Entries';
+$txt['karma_delete_confirm'] = 'Are you sure you want to remove the selected log entries?';
+$txt['karma_log_desc'] = 'View logged Karma actions performed by forum members.';
+$txt['runic_karma'] = 'Log Karma Actions Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+</modification>

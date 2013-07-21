@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:CASFP</id>
+	<version>2.0</version>
+	<name>Change Account Status From Profile</name>
+	<type>modification</type>
+		<install for="2.0 - 2.0.99">
+    <readme type="inline" parsebbc="true">Thanks go to [url=http://www.simplemachines.org/community/index.php?action=profile;u=118168]Blue Dream[/url] for giving permission to release this tip as a mod. Original thread can be found [url=http://www.simplemachines.org/community/index.php?topic=256305.0]Here[/url]	</readme>
+    <modification>install2.xml</modification>
+	</install>
+	<uninstall for="2.0 - 2.0.99">
+		<modification reverse="true">install2.xml</modification>
+	</uninstall>
+	<install for="1.1 - 1.1.99">
+    <readme type="inline" parsebbc="true">Thanks go to [url=http://www.simplemachines.org/community/index.php?action=profile;u=118168]Blue Dream[/url] for giving permission to release this tip as a mod. Original thread can be found [url=http://www.simplemachines.org/community/index.php?topic=256305.0]Here[/url]	</readme>
+    <modification>install.xml</modification>
+	</install>
+	<uninstall for="1.1 - 1.1.99">
+		<modification reverse="true">install.xml</modification>
+	</uninstall>
+</package-info>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:LogKarmaActs</id>
+	<name>Log Karma Actions</name>
+	<version>2.0</version>
+	<type>modification</type>
+	<install for="2.0 - 2.0.99">
+ 		<modification format="xml" type="file">install.xml</modification>
+		<database>install.php</database>
+	</install>
+	<uninstall for="2.0 - 2.0.99">
+		<modification format="xml" type="file" reverse="true">install.xml</modification>
+	</uninstall>
+</package-info>

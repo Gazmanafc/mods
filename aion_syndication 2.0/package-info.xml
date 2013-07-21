@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<name>Aion Syndication</name>
+	<id>Runic:Aion_Syndication</id>
+	<version>2.0</version>
+	<type>modification</type>
+	
+	<install for="2.0 - 2.0.99">
+		<modification type="file">install.xml</modification>
+		<modification type="file">english.xml</modification>
+		<database>install.php</database>
+		<require-file name="item.gif" destination="$imagesdir/bbc" />
+		<require-file name="spell.gif" destination="$imagesdir/bbc" />
+		<require-file name="quest.gif" destination="$imagesdir/bbc" />
+		<require-file name="npc.gif" destination="$imagesdir/bbc" />
+		<require-file name="recipe.gif" destination="$imagesdir/bbc" />
+	</install>
+	
+	<uninstall for="2.0 - 2.0.99">
+		<modification type="file" reverse="true">install.xml</modification>
+		<modification type="file" reverse="true">english.xml</modification>
+		<remove-file name="$imagesdir/bbc/item.gif" /> 
+		<remove-file name="$imagesdir/bbc/spell.gif" /> 
+		<remove-file name="$imagesdir/bbc/quest.gif" /> 
+		<remove-file name="$imagesdir/bbc/npc.gif" /> 
+		<remove-file name="$imagesdir/bbc/recipe.gif" /> 
+	</uninstall>
+</package-info>

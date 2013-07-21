@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:new_profile_layout</id>
+	<name>New Profile Layout</name>
+	<version>1.7</version>
+	<type>modification</type>
+	<install for="1.1 - 1.1.99">
+		<modification type="file">theme.xml</modification>
+		<modification type="file">languages.xml</modification>
+		<modification type="file">source.xml</modification>
+		<require-dir name="picons" destination="$imagesdir" />
+	</install>
+	<uninstall for="1.1 - 1.1.99">
+		<modification type="file" reverse="true">theme.xml</modification>
+		<modification type="file" reverse="true">languages.xml</modification>
+		<modification type="file" reverse="true">source.xml</modification>
+		<remove-dir name="$imagesdir/picons" />
+	</uninstall>
+</package-info>

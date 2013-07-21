@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://dev.smfchat.com/xsl/modification.xsl"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:AutoLock</id>
+	<version>2.0</version>
+	
+	<file name="$sourcedir/Admin.php">
+		<operation>
+			<search position="before"><![CDATA[						// Note the comma!! The setting with automatically appear with the first mod to be added.]]></search>
+			<add><![CDATA[
+						'autolock' => array($txt['autoLock_title']),]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[		// Mod authors if you want to be "real freaking good" then add any setting pages for your mod BELOW this line!]]></search>
+			<add><![CDATA[
+		array('ModifyAutoLock', 'area=modsettings;sa=autolock'),]]></add>
+		</operation>
+	</file>
+
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="before"><![CDATA[		// Mod authors, once again, if you have a whole section to add do it AFTER this line, and keep a comma at the end.]]></search>
+			<add><![CDATA[
+		'autolock' => 'ModifyAutoLock',]]></add>
+		</operation>
+		<operation>
+			<search position="end" />
+			<add><![CDATA[// Modify Auto Lock
+function ModifyAutoLock($return_config = false)
+{
+	global $txt, $scripturl, $context, $settings, $sc, $modSettings, $smcFunc;
+	
+	$query = $smcFunc['db_query']('', '
+		SELECT id_board, id_cat, child_level, name FROM {db_prefix}boards ORDER BY board_order ASC
+	');
+	
+	$config_vars = array();
+	$last = -1;
+	
+	$config_vars[] = array('check', 'autoLock_sticky');
+	$config_vars[] = '';
+	
+	while($row = $smcFunc['db_fetch_assoc']($query)) {
+		if($row['id_cat'] != $last && $last != -1) {
+			$config_vars[] = '';
+		}
+		$al_board_id = 'autoLock_' . $row['id_board'];
+		$txt[$al_board_id] = (($row['child_level'] > 0) ? str_repeat('&nbsp; &nbsp; ', $row['child_level']) : '') . $row['name'];
+		$config_vars[] = array('int', $al_board_id);
+		$last = $row['id_cat'];
+	}
+	
+	$smcFunc['db_free_result']($query);
+
+	if ($return_config)
+		return $config_vars;
+
+	$context['post_url'] = $scripturl . '?action=admin;area=modsettings;save;sa=autolock';
+	$context['settings_title'] = $txt['autoLock_desc'];
+
+	if (empty($config_vars))
+	{
+		$context['settings_save_dont_show'] = true;
+		$context['settings_message'] = '<div style="text-align: center">' . $txt['modification_no_misc_settings'] . '</div>';
+
+		return prepareDBSettingContext($config_vars);
+	}
+
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		$save_vars = $config_vars;
+
+		saveDBSettings($save_vars);
+
+		redirectexit('action=admin;area=modsettings;sa=autolock');
+	}
+
+	prepareDBSettingContext($config_vars);
+}
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['runic_al'],]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/ScheduledTasks.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[function scheduled_autoLock()
+{
+	global $modSettings, $sourcedir, $mbname, $txt, $smcFunc, $scripturl;
+
+	// Need this in order to load the language files.
+	loadEssentialThemeData();
+	
+	$boards_to_lock = array();
+	
+	// work out which boards we will be looking at
+	$settings = array_keys($modSettings);
+	foreach($settings as $setting) {
+		if(substr($setting, 0, 8) == 'autoLock') {
+			$thissetting = (int) substr($setting, 9);
+			if($modSettings[$setting] > 0)
+				$boards_to_lock[] = $thissetting;
+		}
+	}
+	
+	// figure out the timestamp for each board - and go do!
+	if(count($boards_to_lock)) {
+		foreach($boards_to_lock as $board_id) {
+			$setting = 'autoLock_' . $board_id;
+			if($modSettings[$setting] > 9999)
+				$modSettings[$setting] = 9999;
+			$timestamp = time() - ($modSettings[$setting] * 86400);
+			$query = 'UPDATE {db_prefix}topics, {db_prefix}messages
+				SET {db_prefix}topics.locked = 1
+				WHERE {db_prefix}topics.id_last_msg = {db_prefix}messages.id_msg
+				AND {db_prefix}topics.id_board = {int:id_board}
+				AND {db_prefix}messages.poster_time <= {int:timestamp}';
+			$query .= (!empty($modSettings['autoLock_sticky']) && $modSettings['autoLock_sticky']) ? '' : '				AND {db_prefix}topics.is_sticky = 0';
+			
+			$result = $smcFunc['db_query']('',
+				$query,
+				array(
+					'id_board' => $board_id,
+					'timestamp' => $timestamp,
+				)
+			);
+		}
+	}
+
+	return true;
+}
+]]></add>
+		</operation>
+	</file>
+</modification>

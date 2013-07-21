@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<!-- This information needs to be the same as that in the package-info.xml. -->
+	<id>runic:nbss</id>
+	<version>1.2</version>
+
+	<file name="$themedir/BoardIndex.template.php">
+		<operation>
+
+			<search position="replace"><![CDATA[</td>
+				<td class="windowbg" valign="middle" align="center" style="width: 12ex;"><span class="smalltext">
+					', $board['posts'], ' ', $txt[21], ' <br />
+					', $board['topics'],' ', $txt[330], '
+				</span></td>
+				<td class="windowbg2" valign="middle" width="22%">
+					<span class="smalltext">';
+
+				/* The board's and children's 'last_post's have:
+				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
+				link, href, subject, start (where they should go for the first unread post.),
+				and member. (which has id, name, link, href, username in it.) */
+				if (!empty($board['last_post']['id']))
+					echo '
+						<b>', $txt[22], '</b>  ', $txt[525], ' ', $board['last_post']['member']['link'] , '<br />
+						', $txt['smf88'], ' ', $board['last_post']['link'], '<br />
+						', $txt[30], ' ', $board['last_post']['time'];
+				echo '
+					</span>
+				</td>]]></search>
+
+			<add><![CDATA[</td>
+				<td class="windowbg2" valign="middle" width="28%">
+					<span class="smalltext">';
+
+				/* The board's and children's 'last_post's have:
+				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
+				link, href, subject, start (where they should go for the first unread post.),
+				and member. (which has id, name, link, href, username in it.) */
+				if (!empty($board['last_post']['id']))
+					echo '
+						<b>', $txt[22], '</b>  ', $board['last_post']['link'] , '<br />
+						', $txt['525'], ' ', $board['last_post']['member']['link'], ' ', $txt[30], ' ', $board['last_post']['time'];
+					echo '
+					 </span><div style="padding-top: 3px;"><table class="tborder" width="100%"><tr valign="bottom"><td class="windowbg" align="center">', $board['posts'], ' ', $txt[21], '</td>
+					<td class="windowbg" align="center">', $board['topics'],' ', $txt[330], '
+				</td>
+			</tr>
+		</table></div>';
+echo'
+				</td>]]></add>
+		</operation>
+	</file>
+</modification>

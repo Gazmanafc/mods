@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:NewSome/newnone</id>
+	<version>1.3</version>
+	<file name="$themedir/BoardIndex.template.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[			echo '
+		<ul class="reset">]]></search>
+			<add><![CDATA[if(!empty($modSettings['nonesomeremover']))
+		{
+					echo '
+		<ul class="reset">
+		]]></add>
+		</operation>
+				<operation>
+			<search position="replace" whitespace="loose"><![CDATA[	</ul>
+	</div>';]]></search>
+			<add><![CDATA[</ul>';
+			}
+			echo'
+	</div>';]]></add>
+		</operation>
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[echo '
+	<div id="posting_icons" class="flow_hidden">]]></search>
+			<add><![CDATA[		if(!empty($modSettings['nonesomeremover']))
+		{
+		echo '
+	<div id="posting_icons" class="flow_hidden">]]></add>
+		</operation>
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[</ul>
+	</div>';
+	}]]></search>
+			<add><![CDATA[		</ul>
+	</div>';
+	}
+	}]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="before" whitespace="loose"><![CDATA[							// Mod authors, add any settings UNDER this line. Include a comma at the end of the line and don't remove this statement!!]]></search>
+			<add><![CDATA[		
+			array('check', 'nonesomeremover'),]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//New Some and New None Remover by Runic
+$txt['nonesomeremover'] = 'Indicators:<br /> <span class="smalltext">Turn on the new_some.gif and new_none.gif icons.</span>';
+$txt['runic_copy'] = 'New Some and New None Remover Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.finnish.php" error="skip"">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//New Some and New None Remover by Runic
+$txt['nonesomeremover'] = 'Viesti-indikaattorit:<br /> <span class="smalltext">Ota käyttöön "Uusia viestejä"(new_some.gif) ja "Ei uusia viestejä"(new_none.gif) kuvakkeet.</span>';
+$txt['runic_copy'] = 'New Some and New None Remover Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+		<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['runic_copy'],]]></add>
+		</operation>
+	</file>
+</modification>

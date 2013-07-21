@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:Quick_Reply_Permission</id>
+	<version>1.2</version>
+	
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['permissionname_can_quick_reply'] = 'User can use Quick Reply';
+$txt['permissionhelp_can_quick_reply'] = 'This permission allows a user the ability to quickly reply to a topic without going to the full reply page.';
+$txt['permissiongroup_qr'] = 'Quick Reply';
+$txt['permissiongroup_simple_qr'] = 'Users can use quick reply';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['permissionname_can_quick_reply'] = 'User can use Quick Reply';
+$txt['permissionhelp_can_quick_reply'] = 'This permission allows a user the ability to quickly reply to a topic without going to the full reply page.';
+$txt['permissiongroup_qr'] = 'Quick Reply';
+$txt['permissiongroup_simple_qr'] = 'Users can use quick reply';
+]]></add>
+		</operation>
+	</file>
+
+</modification>

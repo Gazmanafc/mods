@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="xslt/modification.xsl" type="text/xsl"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:PackageManagerSort</id>
+	<version>1.2</version>
+
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="after"><![CDATA[?>]]></search>
+			<add><![CDATA[
+// --- Sorted Package Manager Listing ---
+$txt['pkgstate_cannot_install'] = 'Can\'t install';
+$txt['pkgstate_cannot_uninstall'] = 'Installed - Not Uninstallable (no uninstall section for this version of SMF)';
+$txt['pkgstate_cannot_uninstall_2'] = 'Installed - Not Uninstallable';
+$txt['pkgstate_cannot_upgrade'] = 'Not Upgradeable';
+//$txt['pkgstate_install'] = 'Installable';
+$txt['pkgstate_install'] = 'Not Installed';
+//$txt['pkgstate_uninstall'] = 'Installed - Uninstallable';
+$txt['pkgstate_uninstall'] = 'Installed';
+$txt['pkgstate_upgrade'] = 'Upgradeable';
+
+$txt['pkgstatehelp_cannot_install'] = 'These mod can not be installed on your current SMF version. You may want to contact the mod author and ask if they can update it to support the latest SMF version.';
+$txt['pkgstatehelp_cannot_uninstall_2'] = 'These mods are installed, but the authors were lazy and did not make them uninstallable. You\'ll need to uninstall them manually.';
+$txt['pkgstatehelp_cannot_upgrade'] = 'These mods are installed, and an upgrade is available. However, something is preventing the upgrade from working successfully.';
+$txt['pkgstatehelp_install'] = 'These mods are not installed. The mods specify that they\'re compatible with your SMF version.';
+$txt['pkgstatehelp_uninstall'] = 'These mods are currently installed, and may be uninstalled.';
+$txt['pkgstatehelp_upgrade'] = 'A previous version of these mods is installed. Installing the new version will upgrade your current installation.';
+$txt['PackageSort'] = 'Package Manager Sort Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// --- Sorted Package Manager Listing ---
+$txt['pkgstate_cannot_install'] = 'Can\'t install';
+$txt['pkgstate_cannot_uninstall'] = 'Installed - Not Uninstallable (no uninstall section for this version of SMF)';
+$txt['pkgstate_cannot_uninstall_2'] = 'Installed - Not Uninstallable';
+$txt['pkgstate_cannot_upgrade'] = 'Not Upgradeable';
+//$txt['pkgstate_install'] = 'Installable';
+$txt['pkgstate_install'] = 'Not Installed';
+//$txt['pkgstate_uninstall'] = 'Installed - Uninstallable';
+$txt['pkgstate_uninstall'] = 'Installed';
+$txt['pkgstate_upgrade'] = 'Upgradeable';
+
+$txt['pkgstatehelp_cannot_install'] = 'These mod can not be installed on your current SMF version. You may want to contact the mod author and ask if they can update it to support the latest SMF version.';
+$txt['pkgstatehelp_cannot_uninstall_2'] = 'These mods are installed, but the authors were lazy and did not make them uninstallable. You\'ll need to uninstall them manually.';
+$txt['pkgstatehelp_cannot_upgrade'] = 'These mods are installed, and an upgrade is available. However, something is preventing the upgrade from working successfully.';
+$txt['pkgstatehelp_install'] = 'These mods are not installed. The mods specify that they\'re compatible with your SMF version.';
+$txt['pkgstatehelp_uninstall'] = 'These mods are currently installed, and may be uninstalled.';
+$txt['pkgstatehelp_upgrade'] = 'A previous version of these mods is installed. Installing the new version will upgrade your current installation.';
+$txt['PackageSort'] = 'Package Manager Sort Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// --- Sorted Package Manager Listing ---
+$txt['pkgstate_cannot_install'] = 'Can\'t install';
+$txt['pkgstate_cannot_uninstall'] = 'Installed - Not Uninstallable (no uninstall section for this version of SMF)';
+$txt['pkgstate_cannot_uninstall_2'] = 'Installed - Not Uninstallable';
+$txt['pkgstate_cannot_upgrade'] = 'Not Upgradeable';
+//$txt['pkgstate_install'] = 'Installable';
+$txt['pkgstate_install'] = 'Not Installed';
+//$txt['pkgstate_uninstall'] = 'Installed - Uninstallable';
+$txt['pkgstate_uninstall'] = 'Installed';
+$txt['pkgstate_upgrade'] = 'Upgradeable';
+
+$txt['pkgstatehelp_cannot_install'] = 'These mod can not be installed on your current SMF version. You may want to contact the mod author and ask if they can update it to support the latest SMF version.';
+$txt['pkgstatehelp_cannot_uninstall_2'] = 'These mods are installed, but the authors were lazy and did not make them uninstallable. You\'ll need to uninstall them manually.';
+$txt['pkgstatehelp_cannot_upgrade'] = 'These mods are installed, and an upgrade is available. However, something is preventing the upgrade from working successfully.';
+$txt['pkgstatehelp_install'] = 'These mods are not installed. The mods specify that they\'re compatible with your SMF version.';
+$txt['pkgstatehelp_uninstall'] = 'These mods are currently installed, and may be uninstalled.';
+$txt['pkgstatehelp_upgrade'] = 'A previous version of these mods is installed. Installing the new version will upgrade your current installation.';
+$txt['PackageSort'] = 'Package Manager Sort Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// --- Sorted Package Manager Listing ---
+$txt['pkgstate_cannot_install'] = 'Can\'t install';
+$txt['pkgstate_cannot_uninstall'] = 'Installed - Not Uninstallable (no uninstall section for this version of SMF)';
+$txt['pkgstate_cannot_uninstall_2'] = 'Installed - Not Uninstallable';
+$txt['pkgstate_cannot_upgrade'] = 'Not Upgradeable';
+//$txt['pkgstate_install'] = 'Installable';
+$txt['pkgstate_install'] = 'Not Installed';
+//$txt['pkgstate_uninstall'] = 'Installed - Uninstallable';
+$txt['pkgstate_uninstall'] = 'Installed';
+$txt['pkgstate_upgrade'] = 'Upgradeable';
+
+$txt['pkgstatehelp_cannot_install'] = 'These mod can not be installed on your current SMF version. You may want to contact the mod author and ask if they can update it to support the latest SMF version.';
+$txt['pkgstatehelp_cannot_uninstall_2'] = 'These mods are installed, but the authors were lazy and did not make them uninstallable. You\'ll need to uninstall them manually.';
+$txt['pkgstatehelp_cannot_upgrade'] = 'These mods are installed, and an upgrade is available. However, something is preventing the upgrade from working successfully.';
+$txt['pkgstatehelp_install'] = 'These mods are not installed. The mods specify that they\'re compatible with your SMF version.';
+$txt['pkgstatehelp_uninstall'] = 'These mods are currently installed, and may be uninstalled.';
+$txt['pkgstatehelp_upgrade'] = 'A previous version of these mods is installed. Installing the new version will upgrade your current installation.';
+$txt['PackageSort'] = 'Package Manager Sort Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<name>Signature Area BBCode Buttons</name>
+	<id>runic:BBCodeBarForSignature</id>
+	<version>2.0.3</version>
+	<homepage>http://www.bryandeakin.com/</homepage>
+	<file name="$themedir/Profile.template.php">
+		<operation>
+		<search position="replace" whitespace="loose"><![CDATA[<textarea class="editor" onkeyup="calcCharLeft();" name="signature" rows="5" cols="50">', $context['member']['signature'], '</textarea><br />';]]></search>
+			<add><![CDATA[';
+							// Signature Area BBCode Buttons start				
+
+		// load the post variables
+loadLanguage('Post');
+	
+						
+			echo'<div id="bbcBox_message"></div>';
+	echo'<div id="smileyBox_message"></div>';
+		//You know that on bryandeakin.com you can speak to some of the largest names of SMF History.
+	echo template_control_richedit($context['post_box_name'], 'smileyBox_message', 'bbcBox_message');
+
+
+// Signature Area BBCode Buttons end
+		]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Profile-Modify.php">	
+		<operation>
+		<search position="replace" whitespace="loose"><![CDATA[global $modSettings, $context, $txt, $cur_profile, $smcFunc;]]></search>
+		<add>
+		 <![CDATA[global $modSettings, $context, $txt, $cur_profile, $smcFunc, $sourcedir;]]>	
+		</add>
+		</operation>	
+		<operation>
+		<search position="before" whitespace="loose"><![CDATA[$context['member']['signature'] = empty($cur_profile['signature']) ? '' : str_replace(array('<br />', '<', '>', '"', '\''), array("\n", '&lt;', '&gt;', '&quot;', '&#039;'), $cur_profile['signature']);]]></search>
+		<add>
+		 <![CDATA[	 
+		 // Signature Area BBCode Buttons start			
+	
+	$modSettings['disable_wysiwyg'] = !empty($modSettings['disable_wysiwyg']) || empty($modSettings['enableBBC']);
+
+	// Needed for the WYSIWYG editor.
+	require_once($sourcedir . '/Subs-Editor.php');
+	// BryanDeakin.com also has many free mods and themes.
+	// Now create the editor.
+	$editorOptions = array(
+		'id' => 'signature',
+		'value' => $context['member']['signature'],
+		'width' => '90%',
+	);
+	// Needed for the WYSIWYG editor.
+	create_control_richedit($editorOptions);
+	$context['post_box_name'] = $editorOptions['id'];
+ 
+	// Signature Area BBCode Buttons end]]>
+
+		</add>
+		</operation>
+	</file>
+</modification>

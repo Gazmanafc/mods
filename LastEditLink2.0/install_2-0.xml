@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:LastEditLink</id>
+	<version>2.0</version>
+	<file name="$sourcedir/Post.php">
+		<operation>
+			<search position="before"><![CDATA[			$msgOptions['modify_name'] = $user_info['name'];]]></search>
+			<add><![CDATA[
+            $msgOptions['modify_id'] = $user_info['id'];]]></add>
+		</operation>
+
+		<operation>
+			<search position="before"><![CDATA[				$msgOptions['modify_name'] = $user_info['name'];]]></search>
+			<add><![CDATA[
+                $msgOptions['modify_id'] = $user_info['id'];]]></add>
+		</operation>
+        <operation>
+            <search position="before"><![CDATA[global $user_info, $context, $smcFunc, $language;]]></search>
+            <add><![CDATA[
+    global $scripturl;]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[			$msgOptions['modify_name'] = $row['modified_name'];]]></search>
+            <add><![CDATA[
+            $msgoptions['modify_id'] = $row['modified_id'];]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA['name' => isset($msgOptions['modify_time']) ? $msgOptions['modify_name'] : '',]]></search>
+            <add><![CDATA['name' => isset($msgOptions['modify_time']) ? (empty($msgOptions['modify_id']) ? $msgOptions['modify_name'] : '<a href="' . $scripturl . '/index.php?action=profile;u=' . $msgOptions['modify_id'] . '">' . $msgOptions['modify_name'] . '</a>') : '',]]></add>
+        </operation>
+	</file>
+
+    <file name="$sourcedir/Subs-Post.php">
+        <operation>
+            <search position="before"><![CDATA[$messages_columns['id_msg_modified'] = $modSettings['maxMsgID'];]]></search>
+            <add><![CDATA[
+        $messages_columns['modified_id'] = (int) $msgOptions['modify_id'];]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[, 'smileys_enabled']]></search>
+            <add><![CDATA[, 'modified_id']]></add>
+        </operation>
+    </file>
+
+    <file name="$sourcedir/Display.php">
+        <operation>
+            <search position="replace"><![CDATA[SELECT
+				id_msg, icon, subject, poster_time, poster_ip, id_member, modified_time, modified_name, body,
+				smileys_enabled, poster_name, poster_email, approved,
+				id_msg_modified < {int:new_from} AS is_read
+			FROM {db_prefix}messages
+			WHERE id_msg IN ({array_int:message_list})]]></search>
+            <add><![CDATA[SELECT
+				id_msg, icon, subject, poster_time, poster_ip, m.id_member, modified_time, IFNULL(mem.real_name, modified_name) AS modified_name, body,
+				smileys_enabled, poster_name, poster_email, approved, IFNULL(mem.id_member, 0) AS modified_id,
+				id_msg_modified < {int:new_from} AS is_read
+			FROM {db_prefix}messages AS m
+                LEFT JOIN {db_prefix}members as mem ON (modified_id = mem.id_member)
+			WHERE id_msg IN ({array_int:message_list})]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA['name' => $message['modified_name']
+		),]]></search>
+            <add><![CDATA['name' => empty($message['modified_id']) ? $message['modified_name'] : '<a href="' . $scripturl . '/index.php?action=profile;u=' . $message['modified_id'] . '">' . $message['modified_name'] . '</a>',
+            'id' => $message['modified_id'],
+            'raw_name' => $message['modified_name'],
+		),]]></add>
+        </operation>
+    </file>
+<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['runic_lastedit'],]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// Last Edit Link.
+$txt['runic_lastedit'] = 'Last Edit Link Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+</modification>

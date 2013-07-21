@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:Quick_Reply_Permission</id>
+	<version>1.2</version>
+	
+	<file name="$languagedir/Modifications.finnish.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['permissionname_can_quick_reply'] = 'Käyttäjä voi käyttää Pikavastaus';
+$txt['permissionhelp_can_quick_reply'] = 'Tämä lupaa avulla käyttäjä pystyy nopeasti vastata viestiin menemättä täydellistä vastausta sivulla.';
+$txt['permissiongroup_qr'] = 'Vastaa tähän viestiin';
+$txt['permissiongroup_simple_can_qr'] = 'Käyttäjät voivat käyttää pikavastaus';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.finnish-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['permissionname_can_quick_reply'] = 'K&auml;ytt&auml;j&auml; voi k&auml;ytt&auml;&auml; Pikavastaus';
+$txt['permissionhelp_can_quick_reply'] = 'T&auml;m&auml; lupaa avulla k&auml;ytt&auml;j&auml; pystyy nopeasti vastata viestiin menem&auml;tt&auml; t&auml;ydellist&auml; vastausta sivulla.';
+$txt['permissiongroup_qr'] = 'Vastaa t&auml;h&auml;n viestiin';
+$txt['permissiongroup_simple_can_qr'] = 'K&auml;ytt&auml;j&auml;t voivat k&auml;ytt&auml;&auml; pikavastaus';
+]]></add>
+		</operation>
+	</file>
+
+</modification>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:lpi</id>
+	<version>1.1</version>
+	<file name="$themedir/BoardIndex.template.php">
+		<operation>
+			<search position="replace"><![CDATA[<td class="titlebg" colspan="2">', $txt[214], '</td>]]></search>
+			<add><![CDATA[<td class="titlebg" colspan="2"><a href="', $scripturl, '?action=recent">', $txt[214], '</a></td>]]></add>
+		</operation>			
+				<operation>
+			<search position="replace"><![CDATA[<tr>
+								<td class="middletext" valign="top"><b>', $post['link'], '</b> ', $txt[525], ' ', $post['poster']['link'], ' (', $post['board']['link'], ')</td>
+								<td class="middletext" align="right" valign="top" nowrap="nowrap">', $post['time'], '</td>
+							</tr>';]]></search>
+			<add><![CDATA[<tr>
+								<td valign="top" height="40px"><b>', $post['poster']['link'], '</b><br /><span class="smalltext">', $post['time'], '</span></td>
+								<td class="middletext" valign="top"><b>', $post['link'], '</b> <br /><span class="smalltext" style="color:grey;"> ', $post['preview'], '</span></td>
+								<td class="middletext" align="center" valign="top" nowrap="nowrap"><b>', $post['board']['link'], '</b></td>
+							</tr>';]]></add>
+		</operation>
+	</file>
+</modification>

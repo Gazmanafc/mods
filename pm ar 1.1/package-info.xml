@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:pm_ar</id>
+	<name>PM Auto Responder</name>
+	<type>modification</type>
+	<version>1.1</version>
+
+	<install for="2.0 - 2.99.99">
+		<database>install.php</database>
+		<require-file name="PMAutoResponder.php" destination="$sourcedir" />
+		<require-file name="PMAutoResponder.english.php" destination="$languagedir" />
+	</install>
+
+	<uninstall for="2.0 - 2.99.99">
+		<code>uninstall-required.php</code>
+		<remove-file name="$sourcedir/PMAutoResponder.php" />
+		<remove-file name="$languagedir/PMAutoResponder.english.php" />
+	</uninstall>
+
+</package-info>

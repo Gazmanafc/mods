@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:ncode_imageresizer</id>
+	<version>1.4</version>
+
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="after"><![CDATA[array('check', 'who_enabled'),]]></search>
+			<add><![CDATA['',
+			// nCode Image Resizer
+			array('select', 'ncode_imageresizer_mode', array(&$txt['ncode_imageresizer_original'], &$txt['ncode_imageresizer_enlarge_same'], &$txt['ncode_imageresizer_open_same'], &$txt['ncode_imageresizer_open_new'])),
+			array('int', 'ncode_imageresizer_max_width'),
+			array('int', 'ncode_imageresizer_max_height'),]]></add>
+		</operation>
+	</file>
+	
+	<file name="$sourcedir/Subs.php">
+		<operation>
+			<search position="replace"><![CDATA[array(
+				'tag' => 'img',
+				'type' => 'unparsed_content',
+				'parameters' => array(
+					'alt' => array('optional' => true),
+					'width' => array('optional' => true, 'value' => ' width="$1"', 'match' => '(\d+)'),
+					'height' => array('optional' => true, 'value' => ' height="$1"', 'match' => '(\d+)'),
+				),
+				'content' => '<img src="$1" alt="{alt}"{width}{height} class="bbc_img resized" />',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data = strtr($data, array(\'<br />\' => \'\'));
+					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
+						$data = \'http://\' . $data;
+				'),
+				'disabled_content' => '($1)',
+			),
+			array(
+				'tag' => 'img',
+				'type' => 'unparsed_content',
+				'content' => '<img src="$1" alt="" class="bbc_img" />',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data = strtr($data, array(\'<br />\' => \'\'));
+					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
+						$data = \'http://\' . $data;
+				'),
+				'disabled_content' => '($1)',
+			),]]></search>
+			<add><![CDATA[array(
+				'tag' => 'img',
+				'type' => 'unparsed_content',
+				'parameters' => array(
+					'alt' => array('optional' => true),
+					'width' => array('optional' => true, 'value' => ' width="$1"', 'match' => '(\d+)'),
+					'height' => array('optional' => true, 'value' => ' height="$1"', 'match' => '(\d+)'),
+				),
+				'content' => '<img src="$1" alt="{alt}"{width}{height} border="0" onload="NcodeImageResizer.createOn(this);" class="bbc_img" />',
+				'validate' => create_function('&$tag, &$data, $disabled', '$data = strtr($data, array(\'<br />\' => \'\'));'),
+				'disabled_content' => '($1)',
+			),
+			array(
+				'tag' => 'img',
+				'type' => 'unparsed_content',
+				'content' => '<img src="$1" alt="" border="0" onload="NcodeImageResizer.createOn(this);" class="bbc_img" />',
+				'validate' => create_function('&$tag, &$data, $disabled', '$data = strtr($data, array(\'<br />\' => \'\'));'),
+				'disabled_content' => '($1)',
+			),]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/index.template.php">
+		<operation>
+			<search position="replace"><![CDATA[// Output any remaining HTML headers. (from mods, maybe?)]]></search>
+			<add><![CDATA[echo '<!-- nCode Image Resizer -->
+	<script type="text/javascript" src="', $settings['default_theme_url'], '/ncode_imageresizer.js"></script>';
+
+	// What is the mode?
+	$mode = 'none';	
+	if (isset($modSettings['ncode_imageresizer_mode']))
+	{
+		if ($modSettings['ncode_imageresizer_mode'] == 1)
+			$mode = 'enlarge';
+		elseif ($modSettings['ncode_imageresizer_mode'] == 2)
+			$mode = 'samewindow';
+		elseif ($modSettings['ncode_imageresizer_mode'] == 3)
+			$mode = 'newwindow';		
+	}
+
+	echo '
+	<script language="JavaScript" type="text/javascript"><!-- // --><![CDATA[
+	NcodeImageResizer.BBURL = "', $settings['images_url'], '";
+	NcodeImageResizer.MODE = "', $mode, '";
+	NcodeImageResizer.MAXWIDTH = "', empty($modSettings['ncode_imageresizer_max_width']) ? 0 : (int) $modSettings['ncode_imageresizer_max_width'], '";
+	NcodeImageResizer.MAXHEIGHT = "', empty($modSettings['ncode_imageresizer_max_height']) ? 0 : (int) $modSettings['ncode_imageresizer_max_height'], '";
+	vbphrase = new Array();
+	vbphrase[\'ncode_imageresizer_warning_small\'] = \'', $txt['ncode_imageresizer_warning_small'], '\';
+	vbphrase[\'ncode_imageresizer_warning_filesize\'] = \'', $txt['ncode_imageresizer_warning_filesize'], '\';
+	vbphrase[\'ncode_imageresizer_warning_no_filesize\'] = \'', $txt['ncode_imageresizer_warning_no_filesize'], '\';
+	vbphrase[\'ncode_imageresizer_warning_fullsize\'] = \'', $txt['ncode_imageresizer_warning_fullsize'], '\';
+	// ]]]]><![CDATA[></script>';
+
+	// Output any remaining HTML headers. (from mods, maybe?)]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['ncodecopy'],]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/css/index.css">
+		<operation>
+			<search position="end"></search>
+                        <add><![CDATA[table.ncode_imageresizer_warning, table.ncode_imageresizer_warning td
+	{
+		background-color: #fefee1; /* the bgcolor behind the text and image */
+	}
+	table.ncode_imageresizer_warning {
+		color: #000000; /* the font color */
+		border: 1px solid #CCCDCD; /* the border around the whole thing */
+		cursor: pointer;
+	}
+	table.ncode_imageresizer_warning td {
+		font-size: 10px;
+		vertical-align: middle;
+		text-decoration: none;
+	}
+
+	table.ncode_imageresizer_warning td.td1 {
+		padding: 5px;
+	}]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end"></search>
+                        <add><![CDATA[
+// --- Begin added code - nCode Image Resizer ---
+$txt['ncode_imageresizer_warning_small'] = 'Click this bar to view the full image.';
+$txt['ncode_imageresizer_warning_filesize'] = 'This image has been resized. Click this bar to view the full image. The original image is sized %1$sx%2$s and weighs %3$sKB.';
+$txt['ncode_imageresizer_warning_no_filesize'] = 'This image has been resized. Click this bar to view the full image. The original image is sized %1$sx%2$s.';
+$txt['ncode_imageresizer_warning_fullsize'] = 'Click this bar to view the small image.';
+$txt['ncode_imageresizer_mode'] = 'Resize Mode';
+$txt['ncode_imageresizer_original'] = 'Keep original size';
+$txt['ncode_imageresizer_enlarge_same'] = 'Enlarge in same document';
+$txt['ncode_imageresizer_open_same'] = 'Open in same window';
+$txt['ncode_imageresizer_open_new'] = 'Open in new window';
+$txt['ncode_imageresizer_max_width'] = 'Maximum width';
+$txt['ncode_imageresizer_max_height'] = 'Maximum height<br /><span class="smalltext">Leave blank for no max height.</span>';
+$txt['ncodecopy'] = 'nCode Image Resizer Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+// --- End added code ---
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end"></search>
+                        <add><![CDATA[
+// --- Begin added code - nCode Image Resizer ---
+$txt['ncode_imageresizer_warning_small'] = 'Click this bar to view the full image.';
+$txt['ncode_imageresizer_warning_filesize'] = 'This image has been resized. Click this bar to view the full image. The original image is sized %1$sx%2$s and weighs %3$sKB.';
+$txt['ncode_imageresizer_warning_no_filesize'] = 'This image has been resized. Click this bar to view the full image. The original image is sized %1$sx%2$s.';
+$txt['ncode_imageresizer_warning_fullsize'] = 'Click this bar to view the small image.';
+$txt['ncode_imageresizer_mode'] = 'Resize Mode';
+$txt['ncode_imageresizer_original'] = 'Keep original size';
+$txt['ncode_imageresizer_enlarge_same'] = 'Enlarge in same document';
+$txt['ncode_imageresizer_open_same'] = 'Open in same window';
+$txt['ncode_imageresizer_open_new'] = 'Open in new window';
+$txt['ncode_imageresizer_max_width'] = 'Maximum width';
+$txt['ncode_imageresizer_max_height'] = 'Maximum height<br /><span class="smalltext">Leave blank for no max height.</span>';
+$txt['ncodecopy'] = 'nCode Image Resizer Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+// --- End added code ---
+]]></add>
+		</operation>
+	</file>	
+		<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end"></search>
+                        <add><![CDATA[
+// --- Begin added code - nCode Image Resizer ---
+$txt['ncode_imageresizer_warning_small'] = 'Click this bar to view the full image.';
+$txt['ncode_imageresizer_warning_filesize'] = 'This image has been resized. Click this bar to view the full image. The original image is sized %1$sx%2$s and weighs %3$sKB.';
+$txt['ncode_imageresizer_warning_no_filesize'] = 'This image has been resized. Click this bar to view the full image. The original image is sized %1$sx%2$s.';
+$txt['ncode_imageresizer_warning_fullsize'] = 'Click this bar to view the small image.';
+$txt['ncode_imageresizer_mode'] = 'Resize Mode';
+$txt['ncode_imageresizer_original'] = 'Keep original size';
+$txt['ncode_imageresizer_enlarge_same'] = 'Enlarge in same document';
+$txt['ncode_imageresizer_open_same'] = 'Open in same window';
+$txt['ncode_imageresizer_open_new'] = 'Open in new window';
+$txt['ncode_imageresizer_max_width'] = 'Maximum width';
+$txt['ncode_imageresizer_max_height'] = 'Maximum height<br /><span class="smalltext">Leave blank for no max height.</span>';
+$txt['ncodecopy'] = 'nCode Image Resizer Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+// --- End added code ---
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end"></search>
+                        <add><![CDATA[
+// --- Begin added code - nCode Image Resizer ---
+$txt['ncode_imageresizer_warning_small'] = 'Click this bar to view the full image.';
+$txt['ncode_imageresizer_warning_filesize'] = 'This image has been resized. Click this bar to view the full image. The original image is sized %1$sx%2$s and weighs %3$sKB.';
+$txt['ncode_imageresizer_warning_no_filesize'] = 'This image has been resized. Click this bar to view the full image. The original image is sized %1$sx%2$s.';
+$txt['ncode_imageresizer_warning_fullsize'] = 'Click this bar to view the small image.';
+$txt['ncode_imageresizer_mode'] = 'Resize Mode';
+$txt['ncode_imageresizer_original'] = 'Keep original size';
+$txt['ncode_imageresizer_enlarge_same'] = 'Enlarge in same document';
+$txt['ncode_imageresizer_open_same'] = 'Open in same window';
+$txt['ncode_imageresizer_open_new'] = 'Open in new window';
+$txt['ncode_imageresizer_max_width'] = 'Maximum width';
+$txt['ncode_imageresizer_max_height'] = 'Maximum height<br /><span class="smalltext">Leave blank for no max height.</span>';
+$txt['ncodecopy'] = 'nCode Image Resizer Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+// --- End added code ---
+]]></add>
+		</operation>
+	</file>
+</modification>

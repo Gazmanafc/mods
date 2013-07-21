@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:AdminNotes</id>
+	<version>2.0</version>
+	<name>Admin Notes</name>
+	<type>modification</type>
+
+	<install for="2.0 - 2.0.99">
+        <readme type="file" parsebbc="true">readme.txt</readme>
+        <modification format="xml" type="file">Install.xml</modification>
+		<require-file name="AdminNotes.php" destination="$sourcedir" />
+        <redirect url="$scripturl?action=admin" timeout="7000">redirect.txt</redirect>
+	</install>
+
+	<uninstall for="2.0 - 2.0.99">
+        <readme type="inline">This will uninstall eNinja - Admin Notes Version 0.9.2</readme>
+		<modification format="xml" type="file" reverse="true">Install.xml</modification>
+		<remove-file name="$sourcedir/AdminNotes.php" />
+		<code>Uninstall.php</code>
+	</uninstall>
+
+</package-info>

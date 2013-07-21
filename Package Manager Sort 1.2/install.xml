@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="xslt/modification.xsl" type="text/xsl"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:PackageManagerSort</id>
+	<version>1.2</version>
+
+	<file name="$sourcedir/Packages.php">
+		<operation>
+			<search position="before"><![CDATA[
+			if (!$packageInfo['is_installed'] && $packageInfo['xml']->exists('install'))
+			{
+]]></search>
+			<add><![CDATA[
+				// By default, assume we can't install it.
+				$packageInfo['state'] = '04-cannot_install';
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+						$packageInfo['can_install'] = true;
+]]></search>
+			<add><![CDATA[
+						$packageInfo['state'] = '01-install';
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			// An already installed, but old, package.  Can we upgrade it?
+			elseif ($packageInfo['is_installed'] && !$packageInfo['is_current'] && $packageInfo['xml']->exists('upgrade'))
+			{
+]]></search>
+			<add><![CDATA[
+				// By default, assume we can't upgrade it (invalid version, whatever).
+				$packageInfo['state'] = '05-cannot_upgrade';
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+						if (!$upgrade->exists('@from') || matchPackageVersion($installed_mods[$packageInfo['id']]['version'], $upgrade->fetch('@from')))
+						{
+							$packageInfo['can_upgrade'] = true;
+]]></search>
+			<add><![CDATA[
+							$packageInfo['state'] = '02-upgrade';
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			// Note that it has to be the current version to be uninstallable.  Shucks.
+			elseif ($packageInfo['is_installed'] && $packageInfo['is_current'] && $packageInfo['xml']->exists('uninstall'))
+			{
+				$uninstalls = $packageInfo['xml']->set('uninstall');
+
+				// Can we find any uninstallation methods that work for this SMF version?
+				foreach ($uninstalls as $uninstall)
+					if (!$uninstall->exists('@for') || matchPackageVersion($the_version, $uninstall->fetch('@for')))
+					{
+						$packageInfo['can_uninstall'] = true;
+						break;
+					}
+			}
+]]></search>
+			<add><![CDATA[
+			// Is it installed, and the latest version? Maybe we can uninstall it?
+			elseif ($packageInfo['is_installed'] && $packageInfo['is_current'])
+			{
+				// Is there an uninstall section?
+				if ($packageInfo['xml']->exists('uninstall'))
+				{
+					// Assume we can't uninstall it (version difference, whatever).
+					$packageInfo['state'] = '06-cannot_uninstall';
+
+					$uninstalls = $packageInfo['xml']->set('uninstall');
+
+					// Can we find any uninstallation methods that work for this SMF version?
+					foreach ($uninstalls as $uninstall)
+						if (!$uninstall->exists('@for') || matchPackageVersion($the_version, $uninstall->fetch('@for')))
+						{
+							$packageInfo['can_uninstall'] = true;
+							$packageInfo['state'] = '03-uninstall';
+							break;
+						}
+				}
+				// No uninstall section? No uninstall!
+				else
+					$packageInfo['state'] = '06-cannot_uninstall_2';
+			}
+			// What else could it be?!
+			else
+				$packageInfo['state'] = '07-unknown';
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+				$context['available_mods'][] = $packageInfo;
+]]></search>
+			<add><![CDATA[
+				$context['available_mods'][$packageInfo['state']][] = $packageInfo;
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+		closedir($dir);
+]]></search>
+			<add><![CDATA[
+		// Sort the states.
+		ksort($context['available_mods']);
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/Packages.template.php">
+		<operation>
+			<search position="replace"><![CDATA[
+		echo '
+		<br />
+		<div class="title_bar">
+			<h3 class="titlebg">', $txt['modification_package'], '</h3>
+		</div>
+]]></search>
+			<add><![CDATA[
+		// Loop through all states.
+		foreach ($context['available_mods'] as $state => $available_mods)
+		{
+			// This state's language string.
+			// !!! This should probably be put in the Packages.php file.
+			// Trim off the first three characters (used for sorting).
+			$state_txt = substr($state, 3);
+			// The label itself.
+			$label = isset($txt['pkgstate_' . $state_txt]) ? $txt['pkgstate_' . $state_txt] : $state_txt;
+			// Do we have any help text?
+			$help = isset($txt['pkgstatehelp_' . $state_txt]) ? ' <a href="' . $scripturl . '?action=helpadmin;help=pkgstatehelp_' . $state_txt . '" onclick="return reqWin(this.href);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" align="top" /></a>' : '';
+
+			// Header at the very top.
+			echo '
+			<br />
+			<div class="title_bar">
+				<h3 class="titlebg">', $txt['modification_package'], ' &mdash; ', $label, ' ', $help, '</h3>
+			</div>
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[foreach ($context['available_mods'] as $i => $package)]]></search>
+			<add><![CDATA[foreach ($available_mods as $i => $package)]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+		echo '
+		</tbody>
+		</table>';
+]]></search>
+			<add><![CDATA[
+		echo '
+		</tbody>
+		</table>';
+		}
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['PackageSort'],]]></add>
+		</operation>
+	</file>
+</modification>

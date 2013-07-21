@@ -1,0 +1,27 @@
+﻿<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<name>Pagan Verse</name>
+	<id>runic:Pagan_Verse</id>
+	<type>modification</type>
+	<version>3.1</version>
+    	<!--// Install for SMF 2.0 versions only //-->
+	<install for="2.0-2.0.99">
+ 		<modification format="xml" type="file">copyright.xml</modification>
+		<redirect url="?action=admin;area=modsettings;" />
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<require-file name="PaganVerseHooks.php" destination="$sourcedir" />
+		<require-file name="PaganVerse.english.php" destination="$languagedir" />
+		<require-file name="paganverse.template.php" destination="$themedir" />
+		<code>do_hooks.php</code>
+	</install>
+	
+	<!--// Uninstall for SMF 2.0 versions only //-->
+	<uninstall for="2.0-2.0.99">
+		<modification format="xml" type="file" reverse="true">copyright.xml</modification>
+		<remove-file name="$sourcedir/PaganVerseHooks.php" />
+		<remove-file name="$languagedir/PaganVerse.english.php" />
+		<remove-file name="$themedir/paganverse.template.php" />
+		<code>do_hooks.php</code>
+    </uninstall>
+</package-info>

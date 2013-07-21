@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:LastEditLink</id>
+	<name>Last Edit Link</name>
+	<version>2.0</version>
+	<type>modification</type>
+
+	<install for="2.0 - 2.99.99">
+		<database>install_2-0.php</database>
+		<modification type="file">install_2-0.xml</modification>
+	</install>
+
+	<uninstall for="2.0 - 2.99.99">
+		<modification type="file" reverse="true">install_2-0.xml</modification>
+	</uninstall>
+
+</package-info>

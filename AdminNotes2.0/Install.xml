@@ -1,0 +1,393 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:AdminNotes</id>
+	<version>2.0</version>
+
+    <file name="$sourcedir/Admin.php">
+        <operation>
+            <search position="after"><![CDATA[
+	// Load the credits stuff.
+	require_once($sourcedir . '/Who.php');
+	Credits(true);
+]]></search>
+            <add><![CDATA[
+    // START ADMIN NOTES EDIT
+    // Get the admin notes ready
+    require_once($sourcedir . '/AdminNotes.php');
+    adminNotes();
+    // END ADMIN NOTES EDIT
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$themedir/Admin.template.php">
+        <operation>
+            <search position="after"><![CDATA[// Show the user version information from their server.
+	echo ']]></search>
+            <add><![CDATA[// Show the admin notes
+    template_adminNotes();
+
+	]]></add>
+        </operation>
+
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// This template will show the admin notes with a form at the bottom to add new notes
+function template_adminNotes()
+{
+    global $context, $scripturl, $settings, $txt;
+
+    echo '
+            <div id="admin_notes" class="align_right">
+                <h3 class="catbg"><span class="left"></span>
+                    <a href="', $scripturl, '?action=helpadmin;help=admin_notes_help" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" class="icon" alt="', $txt['help'], '" /></a> ', $txt['admin_notes'], '
+                </h3>
+                <div class="windowbg">
+                    <span class="topslice"><span></span></span>
+					<div class="content">
+                        <div id="admin_notes_inner">';
+
+    if(!empty($context['admin_notes']))
+    {
+        $row = 2;
+        foreach($context['admin_notes'] as $note)
+        {
+            echo '
+                            <div class="windowbg', $row, ' smalltext note_row">
+                                <a href="', $note['delete_href'], '" title="', $txt['admin_notes_delete'], '" onclick="return confirm(\'', $txt['admin_notes_confirm'], '\')"><img src="', $settings['images_url'], '/pm_recipient_delete.gif" alt="X" /></a>
+                                ', $note['poster']['link'], ': ', $note['note'], '
+                            </div>';
+            $row = $row == 2 ? '' : 2;
+        }
+    }
+    else
+        echo '
+                            <span class="smalltext"><b>', $txt['admin_notes_none'], '</b></span>';
+
+    echo'
+                        </div>
+                    </div>
+
+                    <div id="notes_form">
+                        <form action="', $scripturl, '?action=admin" method="post" id="note_form">
+                            <hr style="margin: 6px;" />
+                            <textarea cols="40" rows="2" id="admin_notes_textarea" name="admin_note"></textarea>
+                            <div>
+                                <span id="add_note_button"><input type="submit" value="', $txt['post'], '" name="add_note" /></span>
+                                <span class="smalltext" id="notes_paginator">', $txt['pages'], ': ', $context['paginator'], '</span>
+                                <input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+                            </div>
+                        </form>
+                    </div>
+                    <span class="botslice"><span></span></span>
+                </div>
+            </div>
+            <script language="JavaScript" type="text/javascript"><!-- // --><!', '[CDATA[
+
+                    var add_note_txt = "', $txt['admin_notes_add'], '";
+
+                    // Make textarea bigger if needed
+                    function setupAdminNotesTextarea()
+                    {
+                        // Used later
+                        window["alt_down"] = false;
+
+                        var textarea = document.getElementById("admin_notes_textarea");
+
+                        createEventListener(textarea);
+
+                        // Pre-fill text
+                        textarea.value = add_note_txt;
+
+                        // Event to remove pre filled text on focus
+                        textarea.addEventListener("focus", function(event){
+                            var target;
+
+                            if (!event)
+                                event = window.event;
+
+                            if (event.target)
+                                target = event.target;
+                            else if (e.srcElement)
+                                target = e.srcElement;
+                            else
+                                target = null;
+
+                            if (target.nodeType == 3)
+                                target = target.parentNode;
+
+                            if (target)
+                                if (target.value == add_note_txt)
+                                    target.value = "";
+                        }, false);
+
+                        // Event to add pre filled text on blur when tehre is nothing entered
+                        textarea.addEventListener("blur", function(event){
+                            var target;
+
+                            if (!event)
+                                event = window.event;
+
+                            if (event.target)
+                                target = event.target;
+                            else if (e.srcElement)
+                                target = e.srcElement;
+                            else
+                                target = null;
+
+                            if (target.nodeType == 3)
+                                target = target.parentNode;
+
+                            if (target)
+                                if (target.value == "")
+                                    target.value = add_note_txt;
+                        }, false);
+                    }
+
+                    window.onload = setupAdminNotesTextarea;
+
+                //]]', '></script>';
+}]]></add>
+        </operation>
+    </file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['admin_notes_copy'],]]></add>
+		</operation>
+	</file>
+    <file name="$languagedir/Modifications.english.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin Notes';
+$txt['admin_notes_help'] = 'This is designed to be a fast and simple way for administrators to communicate between each other.<br /><br /><b>Enabled BBCode:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Are you sure you want to delete this note?';
+$txt['admin_notes_delete'] = 'Delete Note';
+$txt['admin_notes_add'] = 'Add Note...';
+$txt['admin_notes_none'] = 'There are no notes to be displayed';
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.english-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin Notes';
+$txt['admin_notes_help'] = 'This is designed to be a fast and simple way for administrators to communicate between each other.<br /><br /><b>Enabled BBCode:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Are you sure you want to delete this note?';
+$txt['admin_notes_delete'] = 'Delete Note';
+$txt['admin_notes_add'] = 'Add Note...';
+$txt['admin_notes_none'] = 'There are no notes to be displayed';
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+ <file name="$languagedir/Modifications.english_british.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin Notes';
+$txt['admin_notes_help'] = 'This is designed to be a fast and simple way for administrators to communicate between each other.<br /><br /><b>Enabled BBCode:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Are you sure you want to delete this note?';
+$txt['admin_notes_delete'] = 'Delete Note';
+$txt['admin_notes_add'] = 'Add Note...';
+$txt['admin_notes_none'] = 'There are no notes to be displayed';
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin Notes';
+$txt['admin_notes_help'] = 'This is designed to be a fast and simple way for administrators to communicate between each other.<br /><br /><b>Enabled BBCode:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Are you sure you want to delete this note?';
+$txt['admin_notes_delete'] = 'Delete Note';
+$txt['admin_notes_add'] = 'Add Note...';
+$txt['admin_notes_none'] = 'There are no notes to be displayed';
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+    <file name="$languagedir/Modifications.turkish.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin Notlar';
+$txt['admin_notes_help'] = 'Bu eklenti yöneticilerin kendi aralarinda hizli ve basit bir sekilde iletisim kurmak üzere tasarlanmistir.<br /><br /><b>BBCode Etkin:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Bu notu silmek istediginizden emin misiniz?';
+$txt['admin_notes_delete'] = 'Notu Sil';
+$txt['admin_notes_add'] = 'Not Ekle...';
+$txt['admin_notes_none'] = 'Görüntülenecek hiçbir not yok.';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.turkish-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin Notlar';
+$txt['admin_notes_help'] = 'Bu eklenti yöneticilerin kendi aralarinda hizli ve basit bir sekilde iletisim kurmak üzere tasarlanmistir.<br /><br /><b>BBCode Etkin:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Bu notu silmek istediginizden emin misiniz?';
+$txt['admin_notes_delete'] = 'Notu Sil';
+$txt['admin_notes_add'] = 'Not Ekle...';
+$txt['admin_notes_none'] = 'Görüntülenecek hiçbir not yok.';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.spanish_es.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Notas de Admin';
+$txt['admin_notes_help'] = 'Esta herramienta est&aacute; dise&ntilde;ada para ser una forma r&aacute;pida y simple para comunicarse entre administradores.<br /><br /><b> BBCode permitido:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = '&iquest;Est&aacute;s seguro(a) de querer borrar esta nota?';
+$txt['admin_notes_delete'] = 'Borrar Nota';
+$txt['admin_notes_add'] = 'Agregar nota...';
+$txt['admin_notes_none'] = 'Actualmente, no hay notas para mostrar.';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.spanish_es-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Notas de Admin';
+$txt['admin_notes_help'] = 'Esta herramienta est&aacute; dise&ntilde;ada para ser una forma r&aacute;pida y simple para comunicarse entre administradores.<br /><br /><b> BBCode permitido:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = '&iquest;Est&aacute;s seguro(a) de querer borrar esta nota?';
+$txt['admin_notes_delete'] = 'Borrar Nota';
+$txt['admin_notes_add'] = 'Agregar nota...';
+$txt['admin_notes_none'] = 'Actualmente, no hay notas para mostrar.';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.spanish_latin.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Notas de Admin';
+$txt['admin_notes_help'] = 'Esta herramienta est&aacute; dise&ntilde;ada para ser una forma r&aacute;pida y simple para comunicarse entre administradores.<br /><br /><b> BBCode permitido:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = '&iquest;Est&aacute;s seguro(a) de querer borrar esta nota?';
+$txt['admin_notes_delete'] = 'Borrar Nota';
+$txt['admin_notes_add'] = 'Agregar nota...';
+$txt['admin_notes_none'] = 'Actualmente, no hay notas para mostrar.';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.spanish_latin-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Notas de Admin';
+$txt['admin_notes_help'] = 'Esta herramienta est&aacute; dise&ntilde;ada para ser una forma r&aacute;pida y simple para comunicarse entre administradores.<br /><br /><b> BBCode permitido:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = '&iquest;Est&aacute;s seguro(a) de querer borrar esta nota?';
+$txt['admin_notes_delete'] = 'Borrar Nota';
+$txt['admin_notes_add'] = 'Agregar nota...';
+$txt['admin_notes_none'] = 'Actualmente, no hay notas para mostrar.';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.german.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin Notizen';
+$txt['admin_notes_help'] = 'Hier k&ouml;nnen Admins schnell und einfach miteinander reden.<br /><br /><b>Erlaubter BBCode:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Bist Du sicher das Du diese Notiz l&ouml;schen willst?';
+$txt['admin_notes_delete'] = 'Notiz l&ouml;schen';
+$txt['admin_notes_add'] = 'Notiz schreiben';
+$txt['admin_notes_none'] = 'Derzeit gibt es keine Notizen zum anzeigen.';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.german-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin Notizen';
+$txt['admin_notes_help'] = 'Hier k&ouml;nnen Admins schnell und einfach miteinander reden.<br /><br /><b>Erlaubter BBCode:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Bist Du sicher das Du diese Notiz l&ouml;schen willst?';
+$txt['admin_notes_delete'] = 'Notiz l&ouml;schen';
+$txt['admin_notes_add'] = 'Notiz schreiben';
+$txt['admin_notes_none'] = 'Derzeit gibt es keine Notizen zum anzeigen.';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.dutch.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin notities';
+$txt['admin_notes_help'] = 'Hier kunnen admins snel en gemakkelijk berichten uitwisselen<br /><br /><b>Toegestane BBCode:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Weet je zeker dat je deze notitie wilt verwijderen?';
+$txt['admin_notes_delete'] = 'Notitie verwijderen;
+$txt['admin_notes_add'] = 'Notitie schrijven';
+$txt['admin_notes_none'] = 'Momenteel zijn er geen notities';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+
+    <file name="$languagedir/Modifications.dutch-utf8.php" error="skip">
+        <operation>
+            <search position="end" />
+            <add><![CDATA[
+// Admin Notes
+$txt['admin_notes'] = 'Admin notities';
+$txt['admin_notes_help'] = 'Hier kunnen admins snel en gemakkelijk berichten uitwisselen<br /><br /><b>Toegestane BBCode:</b> b, i, url, br, u, color, font, me, s';
+$txt['admin_notes_confirm'] = 'Weet je zeker dat je deze notitie wilt verwijderen?';
+$txt['admin_notes_delete'] = 'Notitie verwijderen;
+$txt['admin_notes_add'] = 'Notitie schrijven';
+$txt['admin_notes_none'] = 'Momenteel zijn er geen notities';
+// Do Not Translate
+$txt['admin_notes_copy'] = 'Admin Notes Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+        </operation>
+    </file>
+</modification>

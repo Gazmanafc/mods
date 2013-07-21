@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:ShowUnreadPMs</id>
+	<version>1.2</version>
+	<file name="$sourcedir/PersonalMessage.php">
+		<operation>
+			<search position="replace"><![CDATA[if ($context['folder'] == 'sent' || empty($row['bcc']))
+				$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';]]></search>
+			<add><![CDATA[			$do_bold = ($context['folder'] == 'sent' && $row['is_read'] == 0);
+			if ($context['folder'] == 'sent' || empty($row['bcc']))
+				$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . ($do_bold ? '<b>' . $row['to_name'] . '</b>' : $row['to_name']) . '</a>';]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['ShowUnreadPM'],]]></add>
+		</operation>
+	</file>
+		<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['ShowUnreadPM'] = 'Show Unread PMs Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+</modification>

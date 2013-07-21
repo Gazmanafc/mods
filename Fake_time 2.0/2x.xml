@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:fakeonlinetime</id>
+	<version>2.0</version>
+
+	<file name="$languagedir/index.english.php">
+		<operation>
+			<search position="replace"><![CDATA[$txt['users_active'] = 'Users active in past %1$d minutes';]]></search>
+			<add><![CDATA[$txt['users_active'] = 'Users active in past ' . (!empty($modSettings['lastActiveFake']) ? $modSettings['lastActiveFake'] : $modSettings['lastActive'] ) . ' minutes';]]></add>
+		</operation>
+	</file>
+	
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="replace"><![CDATA[			array('int', 'lastActive'),]]></search>
+			<add><![CDATA[			array('int', 'lastActive'),
+			array('int', 'lastActiveFake'),]]></add>
+		</operation>
+	</file>
+
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['fotcopyright'],]]></add>
+		</operation>
+	</file>
+		<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[//Fake Online Time Mod
+$txt['fotcopyright'] = 'Pagan Verse Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+$txt['lastActiveFake'] = 'Fake User online time threshold';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+					<add><![CDATA[//Fake Online Time Mod
+$txt['fotcopyright'] = 'Pagan Verse Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+$txt['lastActiveFake'] = 'Fake User online time threshold';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+						<add><![CDATA[//Fake Online Time Mod
+$txt['fotcopyright'] = 'Pagan Verse Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+$txt['lastActiveFake'] = 'Fake User online time threshold';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+						<add><![CDATA[//Fake Online Time Mod
+$txt['fotcopyright'] = 'Pagan Verse Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+$txt['lastActiveFake'] = 'Fake User online time threshold';
+]]></add>
+		</operation>
+	</file>
+</modification>

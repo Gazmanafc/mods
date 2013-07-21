@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:BuddyPage</id>
+	<version>2.0</version>
+	
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['buddypage'] = 'Buddy Page';
+$txt['permissiongroup_buddylist'] = 'Buddy Lists';
+$txt['permissiongroup_simple_buddylist'] = 'Buddy Lists';
+$txt['permissionname_user_buddylist'] = 'Allow buddy list';
+$txt['permissionhelp_user_buddylist'] = 'Allows a user in this group to select buddies from the forum members.';
+$txt['permissionname_user_buddypage'] = 'Allow buddy page';
+$txt['permissionhelp_user_buddypage'] = 'Allows a user to access their buddy list directly from the main menu.';
+$txt['permissionname_user_buddy_seeothers'] = 'Allow user to see if self is marked';
+$txt['permissionhelp_user_buddy_seeothers'] = 'Allows a user to whether their own buddies have them marked as a buddy (i.e. if they have you marked)';
+$txt['permissionname_user_buddy_seecommon'] = 'Allow user to see common buddies';
+$txt['permissionhelp_user_buddy_seecommon'] = 'Allows a user to see for each buddy they have, who is a common buddy (i.e. people on both that buddy\'s list and your list)';
+$txt['buddies'] = 'Buddies';
+$txt['buddiesincommon'] = 'Buddies in common';
+$txt['user_has_you_buddy'] = 'Marked you as buddy';
+$txt['runic_buddy'] = 'Buddy Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Errors.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['cannot_user_buddylist'] = 'You are not permitted to use the buddy list.';
+$txt['cannot_user_buddypage'] = 'You are not permitted to use the buddy page to view your buddies.';
+$txt['no_buddies'] = 'You have no buddies on your buddy list.';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Who.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['whoall_buddypage'] = 'Viewing their buddy page';]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['buddypage'] = 'Buddy Page';
+$txt['permissiongroup_buddylist'] = 'Buddy Lists';
+$txt['permissiongroup_simple_buddylist'] = 'Buddy Lists';
+$txt['permissionname_user_buddylist'] = 'Allow buddy list';
+$txt['permissionhelp_user_buddylist'] = 'Allows a user in this group to select buddies from the forum members.';
+$txt['permissionname_user_buddypage'] = 'Allow buddy page';
+$txt['permissionhelp_user_buddypage'] = 'Allows a user to access their buddy list directly from the main menu.';
+$txt['permissionname_user_buddy_seeothers'] = 'Allow user to see if self is marked';
+$txt['permissionhelp_user_buddy_seeothers'] = 'Allows a user to whether their own buddies have them marked as a buddy (i.e. if they have you marked)';
+$txt['permissionname_user_buddy_seecommon'] = 'Allow user to see common buddies';
+$txt['permissionhelp_user_buddy_seecommon'] = 'Allows a user to see for each buddy they have, who is a common buddy (i.e. people on both that buddy\'s list and your list)';
+$txt['buddies'] = 'Buddies';
+$txt['buddiesincommon'] = 'Buddies in common';
+$txt['user_has_you_buddy'] = 'Marked you as buddy';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Errors.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['cannot_user_buddylist'] = 'You are not permitted to use the buddy list.';
+$txt['cannot_user_buddypage'] = 'You are not permitted to use the buddy page to view your buddies.';
+$txt['no_buddies'] = 'You have no buddies on your buddy list.';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Who.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['whoall_buddypage'] = 'Viewing their buddy page';]]></add>
+		</operation>
+	</file>
+	
+</modification>

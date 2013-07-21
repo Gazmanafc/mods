@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+        <id>Runic:MPTT</id>
+          <name>Most Popular Topic Today</name>
+          <version>2.3</version>
+          <type>modification</type>
+          <install>
+                <readme type="inline">Most Popular Topic Today (ver. 2.0) Don't forget to BACKUP, please.</readme>
+                <modification>install.xml</modification>
+        </install>
+        <uninstall>
+                <readme type="inline">Thank you for using my mod.</readme>
+                <modification reverse="true">install.xml</modification>
+</uninstall>
+</package-info>

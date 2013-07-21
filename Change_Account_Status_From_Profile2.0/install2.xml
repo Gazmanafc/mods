@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:CASFP</id>
+	<version>2.0</version>
+	<file name="$sourcedir/Profile-Modify.php">
+		<operation>
+			<search position="replace"><![CDATA[	'secret_question', 'secret_answer',]]></search>
+			<add><![CDATA[   'secret_question', 'secret_answer', 'is_activated',]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[		'real_name' => array(]]></search>
+			<add><![CDATA[ 		'is_activated' => array(
+			'type' => 'select',
+			'cast_type' => 'int',
+			'options' => 'return array(0 => \'Pending\', 1 => \'Activated\');',
+			'label' => 'Account Status',
+			'permission' => 'moderate_forum',
+		),
+		'real_name' => array(]]></add>
+		</operation>
+	</file>
+	
+</modification>

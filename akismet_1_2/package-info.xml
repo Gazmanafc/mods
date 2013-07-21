@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:Akismet</id>
+	<name>Akismet Spam Blocking</name>
+	<type>modification</type>
+	<version>1.2</version>
+
+	<install for="2.0 - 2.0.99">
+		<database>install20.php</database>
+		<modification type="file">install.xml</modification>
+		<require-file name="Subs-Akismet.php" destination="$sourcedir" />
+		<require-file name="Akismet.class.php" destination="$sourcedir" />
+		<require-file name="Akismet.template.php" destination="$themedir" />
+		<require-file name="Akismet.english.php" destination="$languagedir" />
+		<require-file name="Akismet.english_british.php" destination="$languagedir" />
+		<require-file name="Akismet.english_british-utf8.php" destination="$languagedir" />
+		<require-file name="Akismet.english-utf8.php" destination="$languagedir" />
+	</install>
+
+	<uninstall for="2.0 - 2.0.99">
+		<code>uninstall-required.php</code>
+		<modification type="file" reverse="true">install.xml</modification>
+		<remove-file name="$sourcedir/Subs-Akismet.php" />
+		<remove-file name="$sourcedir/Akismet.class.php" />
+		<remove-file name="$themedir/Akismet.template.php" />
+		<remove-file name="$languagedir/Akismet.english.php" />
+		<remove-file name="$languagedir/Akismet.english-utf8.php" />
+		<remove-file name="$languagedir/Akismet.english_british-utf8.php" />
+		<remove-file name="$languagedir/Akismet.english_british.php" />
+	</uninstall>
+
+</package-info>

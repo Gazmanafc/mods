@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:CASFP</id>
+	<version>1.1</version>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[//Account Status needed for the "Change Account Status From Profile" Mod
+$txt['accountstatus'] = 'Account Status:';
+$txt['pending'] = 'Pending';
+$txt['activated'] = 'Activated';]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Profile.php">
+		<operation>
+			<search position="replace"><![CDATA[	// Now call the sub-action function...]]></search>
+			<add><![CDATA[   // Maybe we are changing the account status?
+   if($user_info['is_admin'] && isset($_POST['account_status']))
+      $profile_vars['is_activated'] = $_POST['account_status'];
+
+   // Now call the sub-action function...]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[		'secret_question' => !isset($user_profile[$memID]['secretQuestion']) ? '' : $user_profile[$memID]['secretQuestion'],]]></search>
+			<add><![CDATA[      'secret_question' => !isset($user_profile[$memID]['secretQuestion']) ? '' : $user_profile[$memID]['secretQuestion'],
+      'is_activated' => !isset($user_profile[$memID]['is_activated']) ? '0' : $user_profile[$memID]['is_activated'],]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/Profile.template.php">
+		<operation>
+			<search position="replace"><![CDATA[								<td><input type="text" name="posts" size="4" value="', $context['member']['posts'], '" /></td>]]></search>
+			<add><![CDATA[                        <td><input type="text" name="posts" size="4" value="', $context['member']['posts'], '" /></td>
+                     </tr>
+                     <tr>
+                        <td><b>', $txt['accountstatus'],'</b></td>
+                        <td>
+                           <select name="account_status">
+                              <option value="0"', $context['member']['is_activated'] == 0 ? ' selected="selected"' : '', '>', $txt['pending'],'</option>
+                              <option value="1"', $context['member']['is_activated'] == 1 ? ' selected="selected"' : '', '>', $txt['activated'],'</option>
+                           </select>
+                        </td>]]></add>
+		</operation>
+	</file>
+</modification>

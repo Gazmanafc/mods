@@ -1,0 +1,20 @@
+﻿<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<name>Daily Targets</name>
+	<id>runic:Daily_Targets</id>
+	<type>modification</type>
+	<version>1.3</version>
+	<install for="2.0 - 2.0.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<modification>install.xml</modification>
+		<require-file name="target.template.php" destination="$themedir" />
+		<require-file name="Target.php" destination="$sourcedir" />
+	</install>
+	
+	<uninstall for="2.0 - 2.0.99">
+		<modification reverse="true">install.xml</modification>
+		<remove-file name="$themedir/target.template.php" />
+		<remove-file name="$sourcedir/Target.php" />
+    </uninstall>
+</package-info>

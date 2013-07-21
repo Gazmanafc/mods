@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:join_password</id>
+	<version>1.1</version>
+
+	<file name="$sourcedir/Register.php">
+		<operation>
+			<search position="before"><![CDATA[// You can't register if it's disabled.
+	if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 3)
+		fatal_lang_error('registration_disabled', false);]]></search>
+			<add><![CDATA[
+
+	// You can't register if the required password is incorrrect..
+	if (!isset($_POST['join_pass']) || (!empty($modSettings['join_pass_enabled']) && !empty($modSettings['join_pass']) && isset($_POST['join_pass']) && $modSettings['join_pass'] != sha1($_POST['join_pass'])))
+		$reg_errors[] = $txt['error_join_pass'];]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[// Is this an incoming AJAX check?]]></search>
+			<add><![CDATA[if (isset($_GET['sa']) && $_GET['sa'] == 'joinpasscheck')
+		return RegisterCheckJoinPass();
+
+	]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[// We all die one day...
+	die();
+}]]></search>
+			<add><![CDATA[
+
+// See if the password for joining is correct...
+function RegisterCheckJoinPass()
+{
+	global $context, $modSettings;
+
+	// This is XML!
+	loadTemplate('Xml');
+	$context['sub_template'] = 'check_join_pass';
+	$context['checked_join_pass'] = isset($_GET['join_pass']) ? $_GET['join_pass'] : '';
+	$context['valid_join_pass'] = true;
+
+	if (isset($context['checked_join_pass']))
+		$context['valid_join_pass'] = (!empty($modSettings['join_pass_enabled']) && isset($_GET['join_pass']) && $modSettings['join_pass'] == sha1($_GET['join_pass']));
+	else
+		$context['valid_join_pass'] = false;
+}]]></add>
+		</operation>
+	</file>
+
+	<file name="$sourcedir/ManageRegistration.php">
+		<operation>
+			<search position="before"><![CDATA[array('text', 'coppaPhone'),]]></search>
+			<add><![CDATA[
+		'',
+			array('check', 'join_pass_enabled'),
+			array('password', 'join_pass'),
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[// Are there some contacts missing?]]></search>
+			<add><![CDATA[// The registration password is encrypted using sha1() for security. Sorry, DB hacker!
+		if (isset($_POST['join_pass']))
+		{
+			$_POST['join_pass'][0] = sha1($_POST['join_pass'][0]);
+			$_POST['join_pass'][1] = sha1($_POST['join_pass'][1]);
+		}
+
+		]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/Register.template.php">
+		<operation>
+			<search position="before"><![CDATA[<dt><strong><label for="smf_autov_pwverify">', $txt['verify_pass'], ':</label></strong></dt>
+						<dd>
+							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '" class="input_password" />
+							<span id="smf_autov_pwverify_div" style="display: none;">
+								<img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif" alt="*" />
+							</span>
+						</dd>]]></search>
+			<add><![CDATA[<dt><strong><label for="smf_autov_join_pass">', $txt['join_pass'], ':</label></strong></dt>
+						<dd>
+							<input type="password" name="join_pass" id="smf_autov_join_pass" size="30" tabindex="', $context['tabindex']++, '" class="input_password" />
+							<span id="smf_autov_join_pass_div">
+								<img id="smf_autov_join_pass_img" src="', $settings['images_url'], '/icons/field_invalid.gif" alt="*" />
+							</span>
+						</dd>]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA["password_valid": "', $txt['registration_password_valid'], '"]]></search>
+			<add><![CDATA[
+		"join_pass_valid": "', $txt['registration_join_pass_available'], '",
+		"join_pass_invalid": "', $txt['registration_join_pass_unavailable'], '",
+		"join_pass_check": "', $txt['registration_join_pass_check'], '",]]></addd>
+		</operation>
+	</file>
+
+	<file name="$themedir/Xml.template.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+
+function template_check_join_pass()
+{
+	global $context;
+
+	echo '<', '?xml version="1.0" encoding="', $context['character_set'], '"?', '>
+<smf>
+	<join_pass valid="', $context['valid_join_pass'] ? 1 : 0, '">', cleanXml($context['checked_join_pass']), '</join_pass>
+</smf>';
+}]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/scripts/register.js">
+		<operation>
+			<search position="after"><![CDATA[// This means this field is reserved and cannot be contained in the password!]]></search>
+			<add><![CDATA[else if (curElement.id.indexOf('join_pass') != -1)
+					curType = 'join_pass';
+				]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[eventHandler = refreshUsername;]]></search>
+			<add><![CDATA[
+		else if (fieldType == 'join_pass')
+			eventHandler = refreshJoinPass;]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=register;sa=usernamecheck;xml;username=' + checkName, checkUsernameCallback);
+
+		return true;
+	}]]></search>
+			<add><![CDATA[
+
+	// Check whether the join_pass exists?
+	function refreshJoinPass(is_auto)
+	{
+		if (!verificationFields['join_pass'])
+			return false;
+
+		// Get the join_pass and do nothing without one!
+		var curjoin_pass = verificationFields['join_pass'][1].value;
+		if (!curjoin_pass)
+			return false;
+
+		if (!is_auto)
+			ajax_indicator(true);
+
+		// Request a search on that join_pass.
+		checkName = curjoin_pass.php_to8bit().php_urlencode();
+		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=register;sa=joinpasscheck;xml;join_pass=' + checkName, checkjoin_passCallback);
+
+		return true;
+	}
+
+	// Callback for getting the join_pass data.
+	function checkJoinPassCallback(XMLDoc)
+	{
+		var isValid;
+
+		if (XMLDoc.getElementsByTagName("join_pass"))
+			isValid = XMLDoc.getElementsByTagName("join_pass")[0].getAttribute("valid");
+		else
+			isValid = true;
+
+		// What to alt?
+		var alt = textStrings[isValid == 1 ? 'join_pass_valid' : 'join_pass_invalid'] ? textStrings[isValid == 1 ? 'join_pass_valid' : 'join_pass_invalid'] : '';
+
+		verificationFields['join_pass'][1].className = isValid == 1 ? 'valid_input' : 'invalid_input';
+		setVerificationImage(verificationFields['join_pass'][2], isValid == 1, alt);
+
+		ajax_indicator(false);
+	}]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['jpcopy'],]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://dev.smfchat.com/xsl/modification.xsl"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:new_profile_layout</id>
+	<version>1.7</version>
+
+	<file name="$sourcedir/Load.php">
+		<operation>
+			<search position="after"><![CDATA[	if (!empty($new_loaded_ids) && $set !== 'minimal')]]></search>
+			<add><![CDATA[	// if this is the user's profile screen, also grab the count of topics they've made
+	if (!empty($new_loaded_ids) && $set == 'profile')
+	{
+		$request = db_query("
+			SELECT ID_MEMBER_STARTED, COUNT( ID_TOPIC ) AS topics
+			FROM {$db_prefix}topics
+			WHERE ID_MEMBER_STARTED" . (count($new_loaded_ids) == 1 ? ' = ' . $new_loaded_ids[0] : ' IN (' . implode(', ', $new_loaded_ids) . ')') . '
+			GROUP BY ID_MEMBER_STARTED', __FILE__, __LINE__);
+		while ($row = mysql_fetch_assoc($request))
+			$user_profile[$row['ID_MEMBER_STARTED']]['topics'] = $row['topics'];
+		mysql_free_result($request);
+	}
+
+]]></add>
+		</operation>
+		
+		<operation>
+			<search position="before"><![CDATA['real_posts' => $profile['posts'],]]></search>
+			<add><![CDATA[
+      'topics' => (isset($profile['topics']) ? comma_format($profile['topics']) : 0),]]></add>
+		</operation>
+	</file>
+	
+	<file name="$sourcedir/Profile.php">
+		<operation>
+			<search position="after"><![CDATA[	// They haven't even been registered for a full day!?]]></search>
+			<add><![CDATA[
+	//-Profile User Action MOD- Start
+	if (allowedTo('who_view'))
+	{
+		// Look for people online, provided they don't mind if you see they are.
+		$request = db_query("
+			SELECT (UNIX_TIMESTAMP(lo.logTime) - UNIX_TIMESTAMP() + " . time() . ") AS logTime, lo.url,
+			IFNULL(mem.showOnline, 1) AS showOnline, lo.session
+			FROM {$db_prefix}log_online AS lo LEFT JOIN {$db_prefix}members AS mem ON (mem.ID_MEMBER = lo.ID_MEMBER)
+			WHERE lo.ID_MEMBER = $memID " . (!allowedTo('moderate_forum') && $memID != $context['user']['id'] ? " AND IFNULL(mem.showOnline, 1) = 1" : '') . "
+			LIMIT 1", __FILE__, __LINE__);
+		$url_data = '';
+		while ($row = mysql_fetch_assoc($request))
+		{
+			$actions = @unserialize($row['url']);
+			if ($actions === false)
+				continue;
+
+			$context['user_action'] = array(
+				'showOnline' => $row['showOnline'],
+				'time' => strtr(timeformat($row['logTime']), array($txt['smf10'] => '', $txt['smf10b'] => '')),
+				'timestamp' => forum_time(true, $row['logTime']),
+				'is_hidden' => $row['showOnline'] == 0,
+				'action' => ''
+				);
+			$url_data[0] = array($row['url'],$memID);
+		}
+
+		if (!empty($url_data))
+		{
+			require_once($sourcedir.'/Who.php');
+      list($context['user_action']['action']) = determineActions($url_data);
+		}
+	}
+  //-Profile User Action MOD- End
+]]></add>
+		</operation>
+	</file>
+</modification>

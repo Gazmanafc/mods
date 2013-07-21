@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:ViewPostcount</id>
+	<version>1.1</version>
+	<file name="$themedir/Display.template.php">
+		<operation>
+			<search position="after" whitespace="loose"><![CDATA[// Show how many posts they have made.]]></search>
+			<add><![CDATA[//Post Count View
+			if(allowedTo('allow_view_postcount'))]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/Profile.template.php">
+				<operation>
+			<search position="replace" whitespace="loose"><![CDATA[<tr>
+					<td><b>', $txt[86], ': </b></td>
+					<td>', $context['member']['posts'], ' (', $context['member']['posts_per_day'], ' ', $txt['posts_per_day'], ')</td>
+				</tr>]]></search>
+			<add><![CDATA[//Post Count View
+			if(allowedTo('allow_view_postcount'))
+				echo '
+				<tr>
+					<td><b>', $txt[86], ': </b></td>
+					<td>', $context['member']['posts'], ' (', $context['member']['posts_per_day'], ' ', $txt['posts_per_day'], ')</td>
+				</tr>';
+				echo']]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/ManagePermissions.php">
+		<operation>
+			<search position="before" whitespace="loose"><![CDATA['profile' => array(]]></search>
+			<add><![CDATA[		
+			'allow_view_postcount' => false,]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/ManagePermissions.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[//View Postcount
+$txt['permissionname_allow_view_postcount'] = 'Allow this group to view the postcount.';
+$txt['permissionhelp_allow_view_postcount'] = 'This option gives this usergroup the ability to see postcounts';
+]]></add>
+		</operation>
+	</file>
+		<file name="$languagedir/ManagePermissions.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[//View Postcount
+$txt['permissionname_allow_view_postcount'] = 'Allow this group to view the postcount.';
+$txt['permissionhelp_allow_view_postcount'] = 'This option gives this usergroup the ability to see postcounts';
+]]></add>
+		</operation>
+	</file>
+		<file name="$languagedir/ManagePermissions.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[//View Postcount
+$txt['permissionname_allow_view_postcount'] = 'Allow this group to view the postcount.';
+$txt['permissionhelp_allow_view_postcount'] = 'This option gives this usergroup the ability to see postcounts';
+]]></add>
+		</operation>
+	</file>
+			<file name="$languagedir/ManagePermissions.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[//View Postcount
+$txt['permissionname_allow_view_postcount'] = 'Allow this group to view the postcount.';
+$txt['permissionhelp_allow_view_postcount'] = 'This option gives this usergroup the ability to see postcounts';
+]]></add>
+		</operation>
+	</file>
+	</modification>

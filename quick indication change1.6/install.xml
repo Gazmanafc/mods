@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:QuickIndicationChange</id>
+	<version>1.6</version>
+	<file name="$themedir/BoardIndex.template.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[// If the board or children is new, show an indicator.
+				if ($board['new'] || $board['children_new'])
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+				// Is it a redirection board?
+				elseif ($board['is_redirect'])
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
+				// No new posts at all! The agony!!
+				else
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+
+				echo ']]></search>
+			<add><![CDATA[//If the board or children is new, show an indicator.
+				 if ($board['new'] || $board['children_new'])echo '
+							', empty($modSettings['on_image']) ? ('<img src="' . $settings['images_url'] . '/' . $context['theme_variant_url']. 'on'. ($board['new'] ? '' : '2') . '.png" alt="' . $txt['new_posts'] . '" title="' . $txt['new_posts'] . '" />') : ('<img src="' . ($board['new'] ? $modSettings['on2_image'] : $modSettings['on_image']) . '" alt="' . $txt['new_posts'] . '" title="' . $txt['new_posts'] . '" />');
+				// Is this a redirect board?
+				elseif ($board['is_redirect'])
+					echo'
+							', empty($modSettings['redirect_image']) ? ('<img src="'. $settings['images_url']. '/' . $context['theme_variant_url']. 'redirect.png" alt="*" title="*" />') : ('<img src="' . $modSettings['redirect_image'] . '" alt="*" title="*" />');
+				//No new posts what a boring forum this is ?!?
+				else
+					echo'
+							', empty($modSettings['off_image']) ? ('<img src="'. $settings['images_url']. '/'. $context['theme_variant_url']. 'off.png" alt="'. $txt['old_posts']. '" title="'. $txt['old_posts']. '" />') : ('<img src="' . $modSettings['off_image'] . '" alt="'. $txt['old_posts']. '" title="'. $txt['old_posts']. '" />');
+					echo'
+					]]></add>
+		</operation>	
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[<li class="floatleft"><img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'new_some.png" alt="" /> ', $txt['new_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'new_none.png" alt="" /> ', $txt['old_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'new_redirect.png" alt="" /> ', $txt['redirect_board'], '</li>]]></search>
+			<add><![CDATA[<li class="floatleft">', empty($modSettings['new_some_image']) ? ('<img src="'. $settings['images_url']. '/'. $context['theme_variant_url']. 'new_some.png" alt="'. $txt['new_posts']. '" title="'. $txt['new_posts']. '" /> '. $txt['new_posts']. '') : ('<img src="' . $modSettings['new_some_image'] . '" alt="" /> '. $txt['new_posts']. ''), '</li>
+			<li class="floatleft">', empty($modSettings['new_none_image']) ? ('<img src="'. $settings['images_url']. '/'. $context['theme_variant_url']. 'new_none.png" alt="'. $txt['old_posts']. '" title="'. $txt['old_posts']. '" /> '. $txt['old_posts']. '') : ('<img src="' . $modSettings['new_none_image'] . '" alt="" /> '. $txt['old_posts']. ''), '</li>
+			<li class="floatleft">', empty($modSettings['new_redirect_image']) ? ('<img src="'. $settings['images_url']. '/'. $context['theme_variant_url']. 'new_redirect.png" alt="'. $txt['redirect_board']. '" title="'. $txt['redirect_board']. '" /> '. $txt['redirect_board']. '') : ('<img src="' . $modSettings['new_redirect_image'] . '" alt="" /> '. $txt['redirect_board']. ''), '</li>]]></add>
+		</operation>
+			<operation>
+			<search position="replace" whitespace="loose"><![CDATA[<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png" alt="" /> ', $txt['old_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png" alt="" /> ', $txt['redirect_board'], '</li>]]></search>
+			<add><![CDATA[<li class="floatleft">', empty($modSettings['new_none_image']) ? ('<img src="'. $settings['images_url']. '/'. $context['theme_variant_url']. 'new_none.png" alt="'. $txt['old_posts']. '" title="'. $txt['old_posts']. '" /> '. $txt['old_posts']. '') : ('<img src="' . $modSettings['new_none_image'] . '" alt="" /> '. $txt['old_posts']. ''), '</li>
+		<li class="floatleft">', empty($modSettings['new_redirect_image']) ? ('<img src="'. $settings['images_url']. '/'. $context['theme_variant_url']. 'new_redirect.png" alt="'. $txt['redirect_board']. '" title="'. $txt['redirect_board']. '" /> '. $txt['redirect_board']. '') : ('<img src="' . $modSettings['new_redirect_image'] . '" alt="" /> '. $txt['redirect_board']. ''), '</li>]]></add>
+		</operation>
+
+	</file>
+	<file name="$themedir/MessageIndex.template.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[// If the board or children is new, show an indicator.
+			if ($board['new'] || $board['children_new'])
+				echo '
+							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+			// Is it a redirection board?
+			elseif ($board['is_redirect'])
+				echo '
+							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
+			// No new posts at all! The agony!!
+			else
+				echo '
+							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+
+			echo '
+				]]></search>
+			<add><![CDATA[
+				 //If the board or children is new, show an indicator.
+				 if ($board['new'] || $board['children_new'])echo '
+							', empty($modSettings['on_image']) ? ('<img src="' . $settings['images_url'] . '/' . $context['theme_variant_url']. 'on'. ($board['new'] ? '' : '2') . '.png" alt="' . $txt['new_posts'] . '" title="' . $txt['new_posts'] . '" />') : ('<img src="' . ($board['new'] ? $modSettings['on2_image'] : $modSettings['on_image']) . '" alt="' . $txt['new_posts'] . '" title="' . $txt['new_posts'] . '" />');
+				// Is this a redirect board?
+				elseif ($board['is_redirect'])
+					echo'
+							', empty($modSettings['redirect_image']) ? ('<img src="'. $settings['images_url']. '/' . $context['theme_variant_url']. 'redirect.png" alt="*" title="*" />') : ('<img src="' . $modSettings['redirect_image'] . '" alt="*" title="*" />');
+				//No new posts what a boring forum this is ?!?
+				else
+					echo'
+							', empty($modSettings['off_image']) ? ('<img src="'. $settings['images_url']. '/'. $context['theme_variant_url']. 'off.png" alt="'. $txt['old_posts']. '" title="'. $txt['old_posts']. '" />') : ('<img src="' . $modSettings['off_image'] . '" alt="'. $txt['old_posts']. '" title="'. $txt['old_posts']. '" />');
+					echo'
+					]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="before" whitespace="loose"><![CDATA[// Mod authors, add any settings UNDER this line. Include a comma at the end of the line and don't remove this statement!!]]></search>
+			<add><![CDATA[	//Indicator Changer Mod
+			array('text', 'on_image'),
+			array('text', 'on2_image'),
+			array('text', 'off_image'),
+			array('text', 'redirect_image'),
+			array('text', 'new_some_image'),
+			array('text', 'new_none_image'),
+			array('text', 'new_redirect_image'),]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['indicatorchange'],]]></add>
+		</operation>
+	</file>
+		<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[//Runics Indicator Mod
+$txt['on_image'] = 'New Post Indicator <br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the on.png image</span>';
+$txt['off_image'] = 'No New Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the off.png image.</span>';
+$txt['redirect_image'] = 'Redirect Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the redirect.png image.</span>';
+$txt['new_some_image'] = 'New Some Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the new_some.png image.</span>';
+$txt['new_none_image'] = 'New None Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the new_none.png image.</span>';
+$txt['new_redirect_image'] = 'New Redirect Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the new_redirect.png image.</span>';
+$txt['on2_image'] = 'New Child Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the on2.png image.</span>';
+$txt['indicatorchange'] = 'Indicator Change Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+					<add><![CDATA[//Runics Indicator Mod
+$txt['on_image'] = 'New Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the on.png image</span>';
+$txt['off_image'] = 'No New Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the off.png image.</span>';
+$txt['redirect_image'] = 'Redirect Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the redirect.png image.</span>';
+$txt['new_some_image'] = 'New Some Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the new_some.png image.</span>';
+$txt['new_none_image'] = 'New None Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the new_none.png image.</span>';
+$txt['new_redirect_image'] = 'New Redirect Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the new_redirect.png image.</span>';
+$txt['on2_image'] = 'New Child Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the on2.png image.</span>';
+$txt['indicatorchange'] = 'Indicator Change Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+						<add><![CDATA[//Runics Indicator Mod
+$txt['on_image'] = 'New Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the on.png image</span>';
+$txt['off_image'] = 'No New Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the off.png image.</span>';
+$txt['redirect_image'] = 'Redirect Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the redirect.png image.</span>';
+$txt['new_some_image'] = 'New Some Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the new_some.png image.</span>';
+$txt['new_none_image'] = 'New None Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the new_none.png image.</span>';
+$txt['new_redirect_image'] = 'New Redirect Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the new_redirect.png image.</span>';
+$txt['on2_image'] = 'New Child Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the on2.png image.</span>';
+$txt['indicatorchange'] = 'Indicator Change Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+						<add><![CDATA[//Runics Indicator Mod
+$txt['on_image'] = 'New Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the on.png image</span>';
+$txt['off_image'] = 'No New Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the off.png image.</span>';
+$txt['redirect_image'] = 'Redirect Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the redirect.png image.</span>';
+$txt['new_some_image'] = 'New Some Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the new_some.png image.</span>';
+$txt['new_none_image'] = 'New None Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the new_none.png image.</span>';
+$txt['new_redirect_image'] = 'New Redirect Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url. This will change the new_redirect.png image.</span>';
+$txt['on2_image'] = 'New Child Post Indicator<br /><span class="smalltext">Just like the header url place the url to your image here, please use the full url.  This will change the on2.png image.</span>';
+$txt['indicatorchange'] = 'Indicator Change Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	</modification>

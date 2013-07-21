@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:BadgesInSignatureandUserpanel</id>
+	<version>2.0</version>
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="after"><![CDATA[// Mod authors, add any settings UNDER this line. Include a comma at the end of the line and don't remove this statement!!]]></search>
+			<add><![CDATA[
+		array('check', 'bis'),
+		array('check', 'biup'),
+		array('check', 'bip'),]]></add>
+		</operation>
+	</file>
+			<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['biupbipbis'],]]></add>
+		</operation>
+	</file>
+		<file name="$themedir/index.template.php">
+		<operation>
+			<search position="before" whitespace="loose"><![CDATA[function template_body_above()
+{]]></search>
+			<add><![CDATA[  global $user_info;]]></add>
+		</operation>
+		<operation>
+			<search position="before" whitespace="loose"><![CDATA[               <li class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></li>]]></search>
+			<add><![CDATA[';
+if (!empty($modSettings['biup']))
+         {
+               if (!empty($user_info['group_name']) && !empty($user_info['stars']))
+            {
+              echo '<ul><li class="membergroup">';
+              list($num_stars, $badge) = explode('#', $user_info['stars']);
+              echo str_repeat('<img src="' . $settings['default_images_url'] . '/' . $badge . '" alt="' . $user_info['group_name'] . '" />', $num_stars);
+              echo '</li></ul>';
+            }
+            }
+          echo']]></add>
+		</operation>
+	</file>
+	<file name="$themedir/Profile.template.php">
+		<operation>
+			<search position="before"><![CDATA[<span class="position">', (!empty($context['member']['group']) ? $context['member']['group'] : $context['member']['post_group']), '</span>]]></search>
+			<add><![CDATA[';
+			if (!empty($modSettings['bip']))
+         {
+			//Mod originally created by Gary M Gadsdon ... visit http://www.babysimpson.co.uk
+			echo'
+			', $context['member']['group_stars'], '	';		
+		 }
+		 echo'
+		 ]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/Display.template.php">
+		<operation>
+			<search position="before"><![CDATA[<div class="signature" id="msg_', $message['id'], '_signature">', $message['member']['signature'], '</div>';]]></search>
+			<add><![CDATA[
+
+		if (!empty($modSettings['bis']))
+   		{
+     		echo '
+            	<div class="signature">';
+        	// Show the member's primary group (like 'Administrator') if they have one.
+      		if (!empty($message['member']['group']))
+      		{
+         		echo '
+                	<li class="membergroup">', $message['member']['group'], '</li>';
+
+      			// Don't show these things for guests.
+           		if (!$message['member']['is_guest'])
+            	{
+         			// Show the post group if and only if they have no other group or the option is on, and they are in a post group.
+         			if ((empty($settings['hide_post_group']) || $message['member']['group'] == '') && $message['member']['post_group'] != '')
+            			echo '
+                		<li class="stars">', $message['member']['group_stars'], '</li>';
+            	}
+         		echo'
+            		</div>';
+        	}
+    	}]]></add>
+		</operation>
+	</file>
+		<file name="$sourcedir/Load.php">
+		<operation>
+			<search position="before" whitespace="loose"><![CDATA[   $user_info += array(]]></search>
+			<add><![CDATA[    //this is for the badge in user area mod
+    'group_name' => isset($user_settings['group_name']) ? $user_settings['group_name'] : '',
+       'stars' => isset($user_settings['stars']) ? $user_settings['stars'] : '',
+      //default stuff from now on :)
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[SELECT mem.*, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
+            FROM {db_prefix}members AS mem
+               LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
+            WHERE mem.id_member = {int:id_member}]]></search>
+			<add><![CDATA[SELECT mem.*, IFNULL(mg.group_name, 0) AS group_name, IFNULL(mg.stars, 0) AS stars, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
+FROM {db_prefix}members AS mem
+LEFT JOIN {db_prefix}membergroups AS mg ON (mem.id_group = mg.id_group)
+LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
+WHERE mem.id_member = {int:id_member}]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//Badges in Signature and User Panel Mod by Runic
+$txt['bis'] = 'Enable Badges in Signature Mod';
+$txt['biup'] = 'Enable Badges in User Panel Mod';
+$txt['bip'] = 'Enable Badges in Profile Mod';
+$txt['biupbipbis'] = 'Badge in User Panel and Signature &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//Badges in Signature and User Panel Mod by Runic
+$txt['bis'] = 'Enable Badges in Signature Mod';
+$txt['biup'] = 'Enable Badges in User Panel Mod';
+$txt['bip'] = 'Enable Badges in Profile Mod';
+$txt['biupbipbis'] = 'Badge in User Panel and Signature &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//Badges in Signature and User Panel Mod by Runic
+$txt['bis'] = 'Enable Badges in Signature Mod';
+$txt['biup'] = 'Enable Badges in User Panel Mod';
+$txt['bip'] = 'Enable Badges in Profile Mod';
+$txt['biupbipbis'] = 'Badge in User Panel and Signature &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//Badges in Signature and User Panel Mod by Runic
+$txt['bis'] = 'Enable Badges in Signature Mod';
+$txt['biup'] = 'Enable Badges in User Panel Mod';
+$txt['bip'] = 'Enable Badges in Profile Mod';
+$txt['biupbipbis'] = 'Badge in User Panel and Signature &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+
+]]></add>
+		</operation>
+	</file>
+
+</modification>

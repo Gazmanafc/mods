@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:Daily_Target</id>
+	<version>1.3</version>
+		<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="before" whitespace="loose"><![CDATA[		// Mod authors, add any settings UNDER this line. Include a comma at the end of the line and don't remove this statement!!]]></search>
+			<add><![CDATA[
+			array('check', 'daily_target_control'),
+			array('text', 'daily_target'),]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[$txt['daily_target_desc'] = 'Decide on what your daily post target is';
+$txt['daily_target'] = 'Enter daily target:';
+$txt['daily_target1'] = 'We are currently at';
+$txt['daily_target2'] = 'of our daily target of';
+$txt['daily_target3'] = 'posts.';
+$txt['daily_target_control'] = 'Turn on the Daily Targets Mod';
+$txt['daily_target_control_desc'] = '<b>Please note:</b> the mod needs to be turned on for it to work';
+$txt['daily_copy'] = 'Daily Targets Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+		<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[$txt['daily_target_desc'] = 'Decide on what your daily post target is';
+$txt['daily_target'] = 'Enter daily target:';
+$txt['daily_target1'] = 'We are currently at';
+$txt['daily_target2'] = 'of our daily target of';
+$txt['daily_target3'] = 'posts.';
+$txt['daily_target_control'] = 'Turn on the Daily Targets Mod';
+$txt['daily_target_control_desc'] = '<b>Please note:</b> the mod needs to be turned on for it to work';
+$txt['daily_copy'] = 'Daily Targets Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+			<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[$txt['daily_target_desc'] = 'Decide on what your daily post target is';
+$txt['daily_target'] = 'Enter daily target:';
+$txt['daily_target1'] = 'We are currently at';
+$txt['daily_target2'] = 'of our daily target of';
+$txt['daily_target3'] = 'posts.';
+$txt['daily_target_control'] = 'Turn on the Daily Targets Mod';
+$txt['daily_target_control_desc'] = '<b>Please note:</b> the mod needs to be turned on for it to work';
+$txt['daily_copy'] = 'Daily Targets Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+			<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[$txt['daily_target_desc'] = 'Decide on what your daily post target is';
+$txt['daily_target'] = 'Enter daily target:';
+$txt['daily_target1'] = 'We are currently at';
+$txt['daily_target2'] = 'of our daily target of';
+$txt['daily_target3'] = 'posts.';
+$txt['daily_target_control'] = 'Turn on the Daily Targets Mod';
+$txt['daily_target_control_desc'] = '<b>Please note:</b> the mod needs to be turned on for it to work';
+$txt['daily_copy'] = 'Daily Targets Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['daily_copy'],]]></add>
+		</operation>
+	</file>
+	<file name="$boarddir/index.php">
+		<operation>
+			<search position="after" whitespace="loose"><![CDATA[// Action and board are both empty... BoardIndex!]]></search>
+			<add><![CDATA[loadTemplate('target');
+global $context;
+$new_posts = 0;
+if (!empty($modSettings['daily_target_control']))
+{
+		require($sourcedir . '/Target.php');
+		dt2();
+}
+if (!isset($_REQUEST['xml']))
+{
+        $layers = $context['template_layers'];
+        $context['template_layers'] = array();
+        foreach ($layers as $layer)
+        {
+                $context['template_layers'][] = $layer;
+                if ($layer == 'body')
+                        $context['template_layers'][] = 'dailyt';
+        }
+}
+		]]></add>
+	</operation>
+	</file>
+</modification>

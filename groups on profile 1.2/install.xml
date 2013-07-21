@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:GroupsOnProfile</id>
+	<version>1.2</version>
+
+	<file name="$sourcedir/Load.php">
+		<operation>
+			<search position="after"><![CDATA[if (!empty($new_loaded_ids) && $set !== 'minimal')]]></search>
+			<add><![CDATA[if (!empty($new_loaded_ids) && $set === 'profile')
+		// Get any additional membergroups to show on their profile.
+		$user_profile[$new_loaded_ids[0]]['list_additional_groups'] = cache_quick_get('membergroup_list_' . $new_loaded_ids[0], 'Subs-Membergroups.php', 'cache_getMembergroupListForProfile', array($user_profile[$new_loaded_ids[0]]['additional_groups']));
+
+	]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA['local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),]]></search>
+			<add><![CDATA[
+		'list_additional_groups' => $profile['list_additional_groups'],]]></add>
+		</operation>
+	</file>
+
+	<file name="$sourcedir/Subs-Membergroups.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// Retrieve a list of (visible) membergroups used by the cache. (Modified)
+function cache_getMembergroupListForProfile($additional_groups)
+{
+	global $scripturl, $smcFunc;
+
+	if (!empty($additional_groups))
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_group, group_name, online_color
+			FROM {db_prefix}membergroups
+			WHERE id_group IN ({array_int:groups})
+				AND min_posts = {int:min_posts}
+				AND hidden = {int:not_hidden}
+				AND id_group != {int:mod_group}
+			ORDER BY group_name',
+			array(
+				'groups' => explode(',', $additional_groups),
+				'min_posts' => -1,
+				'not_hidden' => 0,
+				'mod_group' => 3,
+			)
+		);
+		$groupCache = array();
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
+		$smcFunc['db_free_result']($request);
+	}
+	else
+		$groupCache = array();
+
+	return array(
+		'data' => $groupCache,
+		'expires' => time() + 3600,
+		'refresh_eval' => 'return $GLOBALS[\'modSettings\'][\'settings_updated\'] > ' . time() . ';',
+	);
+}
+
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/Profile.template.php">
+		<operation>
+			<search position="before"><![CDATA[<dd>', $context['member']['username'], '</dd>';]]></search>
+			<add><![CDATA[
+
+	// If they are assigned to additional membergroups, show them.
+	$x = 1;
+	foreach ($context['member']['list_additional_groups'] as $list_additional_group)
+	{
+		echo '
+				<dt>', $txt['position'], ' ', $x, ': </dt>
+				<dd>', $list_additional_group, '</dd>';
+
+		$x++;
+	}
+]]></add>
+		</operation>
+	</file>
+		<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['GroupsOnProfile'],]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['GroupsOnProfile'] = 'Additional Membergroups on Profile Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['GroupsOnProfile'] = 'Additional Membergroups on Profile Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['GroupsOnProfile'] = 'Additional Membergroups on Profile Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['GroupsOnProfile'] = 'Additional Membergroups on Profile Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+</modification>

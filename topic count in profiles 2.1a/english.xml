@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:Topic_Count_In_Profile</id>
+	<version>2.1</version>
+
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['profile_topics_started'] = 'Topics started';
+$txt['profile_topics_participated'] = 'Topics participated in';
+$txt['showTopics'] = 'Show Topics';
+$txt['tcip_title'] = 'Topic Count in Profiles';
+$txt['tcip_enabled'] = 'Enable Topic Count in Profiles';
+$txt['tcip_show_topic_count'] = 'Show topics started';
+$txt['tcip_show_participated_count'] = 'Show topics participated in';
+$txt['tcip_show_topic_list'] = 'Enable topic list';
+$txt['tcip_show_topics'] = 'topics of this person';
+$txt['tcip_show_topics_title'] = 'Latest topics of: ';
+$txt['tcip_posts'] = 'POSTS';
+$txt['tcip_topics'] = 'TOPICS';
+$txt['tcip_copy'] = 'Topic Count In Profile Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['profile_topics_started'] = 'Topics started';
+$txt['profile_topics_participated'] = 'Topics participated in';
+$txt['showTopics'] = 'Show Topics';
+$txt['tcip_title'] = 'Topic Count in Profiles';
+$txt['tcip_enabled'] = 'Enable Topic Count in Profiles';
+$txt['tcip_show_topic_count'] = 'Show topics started';
+$txt['tcip_show_participated_count'] = 'Show topics participated in';
+$txt['tcip_show_topic_list'] = 'Enable topic list';
+$txt['tcip_show_topics'] = 'topics of this person';
+$txt['tcip_show_topics_title'] = 'Latest posts of: ';
+$txt['tcip_posts'] = 'POSTS';
+$txt['tcip_topics'] = 'TOPICS';
+$txt['tcip_copy'] = 'Topic Count In Profile Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['profile_topics_started'] = 'Topics started';
+$txt['profile_topics_participated'] = 'Topics participated in';
+$txt['showTopics'] = 'Show Topics';
+$txt['tcip_title'] = 'Topic Count in Profiles';
+$txt['tcip_enabled'] = 'Enable Topic Count in Profiles';
+$txt['tcip_show_topic_count'] = 'Show topics started';
+$txt['tcip_show_participated_count'] = 'Show topics participated in';
+$txt['tcip_show_topic_list'] = 'Enable topic list';
+$txt['tcip_show_topics'] = 'topics of this person';
+$txt['tcip_show_topics_title'] = 'Latest posts of: ';
+$txt['tcip_posts'] = 'POSTS';
+$txt['tcip_topics'] = 'TOPICS';
+$txt['tcip_copy'] = 'Topic Count In Profile Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['profile_topics_started'] = 'Topics started';
+$txt['profile_topics_participated'] = 'Topics participated in';
+$txt['showTopics'] = 'Show Topics';
+$txt['tcip_title'] = 'Topic Count in Profiles';
+$txt['tcip_enabled'] = 'Enable Topic Count in Profiles';
+$txt['tcip_show_topic_count'] = 'Show topics started';
+$txt['tcip_show_participated_count'] = 'Show topics participated in';
+$txt['tcip_show_topic_list'] = 'Enable topic list';
+$txt['tcip_show_topics'] = 'topics of this person';
+$txt['tcip_show_topics_title'] = 'Latest posts of: ';
+$txt['tcip_posts'] = 'POSTS';
+$txt['tcip_topics'] = 'TOPICS';
+$txt['tcip_copy'] = 'Topic Count In Profile Mod &copy; <a href="http://www.bryandeakin.com">Bryan Runic Deakin</a>';
+]]></add>
+		</operation>
+	</file>
+
+</modification>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:BuddyPage</id>
+	<name>Buddy Page</name>
+	<version>2.0</version>
+	<type>modification</type>
+	
+	<install for="2.0 - 2.0.99">
+		<modification type="file">install.xml</modification>
+		<modification type="file">english.xml</modification>
+		<modification type="file">english_british.xml</modification>
+		<require-file name="BuddyPage.php" destination="$sourcedir" />
+		<require-file name="BuddyPage.template.php" destination="$themedir" />
+		<require-file name="offline.gif" destination="$imagesdir" />
+		<require-file name="online.gif" destination="$imagesdir" />
+	</install>
+	
+	<uninstall for="2.0 - 2.0.99">
+		<modification type="file" reverse="true">install.xml</modification>
+		<modification type="file" reverse="true">english.xml</modification>
+		<modification type="file" reverse="true">english_british.xml</modification>
+		<remove-file name="$sourcedir/BuddyPage.php" />
+		<remove-file name="$themedir/BuddyPage.template.php" />
+		<remove-file name="$imagesdir/offline.gif" />
+		<remove-file name="$imagesdir/online.gif" />
+	</uninstall>
+</package-info>

@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:MPTT</id>
+	<version>2.3</version>
+	<file name="$sourcedir/BoardIndex.php">
+		<operation>
+			<search position="replace"><![CDATA[	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
+]]></search>
+			<add><![CDATA[	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl, $smcFunc;
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
+]]></search>
+			<add><![CDATA[
+	//*********************************** Most popular topic today.***************************//
+	$id_group = $user_info['groups'];
+
+    $request = $smcFunc['db_query']('', '
+    	SELECT COUNT(mes.id_topic) as t, mes.id_topic, mes.subject, boa.member_groups
+    	FROM {db_prefix}messages AS mes
+    		LEFT JOIN {db_prefix}boards as boa ON (mes.id_board = boa.id_board)
+    	WHERE poster_time <= {int:time}
+    		AND poster_time >= {int:time2}
+    	GROUP BY id_topic
+    	ORDER BY t DESC
+    	LIMIT 1',
+    	array(
+    		'time' => time(),
+    		'time2' => (time()-86400),
+    	)
+    );
+    $context['most_popular_topic_today'] = array();
+
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+    {
+    	$context['most_popular_topic_today'] = array(
+		    'coll' => $row['t'],
+		    'id_topic' => $row['id_topic'],
+		    'subject' => $row['subject'],
+		    'memberGroups' => explode(',', $row['member_groups'])
+	    );
+    }
+
+    $smcFunc['db_free_result']($request);
+
+
+	if (isset($context['most_popular_topic_today']['memberGroups']))
+		if (!array_intersect($context['most_popular_topic_today']['memberGroups'], $id_group) && !allowedTo('admin_forums'))
+			$context['topic_mod'] = '0';
+		else
+			$context['topic_mod'] = '1';
+		
+	if (isset($context['most_popular_topic_today']['coll']) == '')
+		$context['topic_mod']='2';
+
+    if ($id_group == '1') 
+    	$context['topic_mod'] = 1;
+
+	//******************************************************************************************//
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/BoardIndex.template.php">
+		<operation>
+			<search position="after"><![CDATA[	// This is the "Recent Posts" bar.
+]]></search>
+			<add><![CDATA[		echo '
+		<div class="title_barIC">
+			<h4 class="titlebg">
+				<span class="ie6_header floatleft">
+					<a href="', $scripturl, '?action=recent"><img class="icon" src="', $settings['images_url'], '/post/xx.gif" alt="', $txt['recent_posts'], '" /></a>
+					', $txt['most_popular_topic_today'], '
+				</span>
+			</h4>
+		</div>
+		<p>';
+	if ($context['topic_mod'] == '0')
+		echo $txt['cant_read_mpt'] . ' ' . implode(',', $user_info['groups']);
+	elseif (!isset($context['most_popular_topic_today']['coll']) || ($context['topic_mod']) == '2')
+        echo $txt['most_pop_top_abs'];
+    else
+      	echo '
+		    <strong><a href="', $scripturl, '?topic=', $context['most_popular_topic_today']['id_topic'], '">', $context['most_popular_topic_today']['subject'], '</a></strong>
+		    <div class="smalltext">
+			    ', $txt['most_pop_top'], ' &quot;', $context['most_popular_topic_today']['coll'], '&quot;
+		    </div>';
+	echo '
+		</p>';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/index.english.php">
+		<operation>
+			<search position="end"></search>
+			<add><![CDATA[
+$txt['most_popular_topic_today'] = 'Most Popular Topic';
+$txt['most_pop_top'] = 'Number of replies per day:';
+$txt['most_pop_top_abs'] = 'Sorry, no-one hes replied today';
+$txt['cant_read_mpt'] = 'Sorry, you cannot read this topic';
+]]></add>
+		</operation>
+	</file>
+	
+</modification>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:nbss</id>
+	<name>New Board Stat Style</name>
+	<version>1.2</version>
+	<!-- Type, one of: modification, avatar, language. -->
+	<type>modification</type>
+
+	<!-- Installation, the key part of this file. -->
+	<install for="2.0.3 - 2.2.99">
+		<modification>install2.xml</modification>
+		<readme type="file" parsebbc="true">readme.txt</readme>
+	</install>
+	<uninstall for="2.0.3 - 2.2.99">
+		<modification reverse="true">install2.xml</modification>
+	</uninstall>
+	<install for="1.1.9 - 1.1.99">
+		<modification>install1.xml</modification>
+        <readme type="file" parsebbc="true">readme.txt</readme>
+	</install>
+	<uninstall for="1.1.9 - 1.1.99">
+		<modification reverse="true">install1.xml</modification>
+	</uninstall>
+</package-info>

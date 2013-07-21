@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Arantor:Entity_BBCode</id>
+	<version>1.0</version>
+	
+	<file name="$languagedir/Modifications.english_british.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['bbc_code_ent'] = 'Standard entity tag';
+$txt['bbc_code_entn'] = 'Numeric entity tag';
+$txt['entity_copy'] = 'Entity Tag Mod &copy; <a href="http://www.bryandeakin.com" targer="_blank">BryanDeakin.com</a>';
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['bbc_code_ent'] = 'Standard entity tag';
+$txt['bbc_code_entn'] = 'Numeric entity tag';
+$txt['entity_copy'] = 'Entity Tag Mod &copy; <a href="http://www.bryandeakin.com" targer="_blank">BryanDeakin.com</a>';
+]]></add>
+		</operation>
+	</file>
+	
+</modification>

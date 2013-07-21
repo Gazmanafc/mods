@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:slogan</id>
+	<version>4.1</version>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[//Slogan by Runic
+$txt['slogan_toggle'] = 'Turn the Slogan Mod on or off';
+$txt['slogan_msg'] ='Choose what your slogan says';
+$txt['slogan'] = 'Slogan Choice';
+$txt['slogan1'] = 'Slogan Mod by Runic';]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/ModSettings.php">
+		<operation>
+			<search position="after" whitespace="loose"><![CDATA[			// Who's online.]]></search>
+			<add><![CDATA[			//Slogan Mod by Runic
+     array('check', 'slogan_toggle'),
+     array('text', 'slogan_msg'),]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/index.template.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[			</tr>
+		</table>';
+
+
+	// display user name]]></search>
+			<add><![CDATA[			</tr>';
+if(!empty($modSettings['slogan_toggle']))                             
+  {
+
+echo'
+			<tr>
+        <td colspan="2" class="Slogan" align="center">';
+	// Slogan Mod by Runic
+	echo'
+		' , !empty($modSettings['slogan_msg']) ? $modSettings['slogan_msg'] : $txt['slogan1'], '
+        </td>
+      </tr> 
+    </table>';
+
+}
+ 
+ elseif(empty($modSettings['slogan_toggle']))
+                              {
+                              echo'
+    </table>';
+                                    
+}
+	// display user name]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/style.css">
+		<operation>
+		<search position="replace" whitespace="loose"><![CDATA[.catbg, .catbg2, .catbg3
+{
+	border-bottom: solid 1px #375576;
+}]]></search>
+    <add><![CDATA[.catbg, .catbg2, .catbg3
+{
+}]]></add>
+   </operation>
+		<operation>
+			<search position="after" whitespace="loose"><![CDATA[/* The AJAX notifier */]]></search>
+			<add><![CDATA[/*Slogan Mod by Runic*/
+.Slogan
+{
+background: #88a6c0;
+font-size: normal;
+border: 0px;
+}]]></add>
+		</operation>
+	</file>
+</modification>

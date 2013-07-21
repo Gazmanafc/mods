@@ -1,0 +1,283 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:Topic_Count_In_Profile</id>
+	<version>2.1</version>
+
+	<file name="$sourcedir/Load.php">
+		<operation>
+			<search position="after"><![CDATA[	if (!empty($new_loaded_ids) && $set !== 'minimal')]]></search>
+			<add><![CDATA[	// if this is the user's profile screen, also grab the count of topics they've made
+	if (!empty($new_loaded_ids) && $set == 'profile')
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_member_started, COUNT( id_topic ) AS topics
+			FROM {db_prefix}topics
+			WHERE id_member_started' . (count($new_loaded_ids) == 1 ? ' = {int:loaded_ids}' : ' IN ({array_int:loaded_ids})') . '
+			GROUP BY id_member_started',
+			array(
+				'loaded_ids' => count($new_loaded_ids) == 1 ? $new_loaded_ids[0] : $new_loaded_ids,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$user_profile[$row['id_member_started']]['topics'] = $row['topics'];
+		$smcFunc['db_free_result']($request);
+
+		$request = $smcFunc['db_query']('', '
+			SELECT id_member, COUNT(DISTINCT id_topic) AS topic_count
+			FROM {db_prefix}messages
+			WHERE id_member' . (count($new_loaded_ids) == 1 ? ' = {int:loaded_ids}' : ' IN ({array_int:loaded_ids})') . '
+			GROUP BY id_member',
+			array(
+				'loaded_ids' => count($new_loaded_ids) == 1 ? $new_loaded_ids[0] : $new_loaded_ids,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$user_profile[$row['id_member']]['topic_count'] = $row['topic_count'];
+		$smcFunc['db_free_result']($request);
+	}
+
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA['real_posts' => $profile['posts'],]]></search>
+			<add><![CDATA[
+		'topics' => (isset($profile['topics']) ? comma_format($profile['topics']) : 0),
+		'topic_count' => (isset($profile['topic_count']) ? comma_format($profile['topic_count']) : 0),]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['tcip_copy'],]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Profile-View.php">
+		<operation>
+			<search position="before"><![CDATA[	if (empty($user_profile[$memID]['date_registered']) || $days_registered < 1)
+		$context['member']['posts_per_day'] = $txt['not_applicable'];
+	else
+		$context['member']['posts_per_day'] = comma_format($context['member']['real_posts'] / $days_registered, 3);
+]]></search>
+			<add><![CDATA[
+
+	if (empty($user_profile[$memID]['date_registered']) || $days_registered < 1)
+		$context['member']['topics_per_day'] = $txt['not_applicable'];
+	else
+		$context['member']['topics_per_day'] = comma_format($context['member']['topics'] / $days_registered, 3);
+
+
+	$context['tcip_enabled'] = !empty($modSettings['tcip_enabled']);
+	$context['tcip_show_topic_count'] = !empty($modSettings['tcip_show_topic_count']);
+	$context['tcip_show_participated_count'] = !empty($modSettings['tcip_show_participated_count']);
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[	// Posting activity by time.
+	$result = $smcFunc['db_query']('user_activity_by_time', '
+		SELECT
+			HOUR(FROM_UNIXTIME(poster_time + {int:time_offset})) AS hour,
+			COUNT(*) AS post_count
+		FROM {db_prefix}messages
+		WHERE id_member = {int:current_member}' . ($modSettings['totalMessages'] > 100000 ? '
+			AND id_topic > {int:top_ten_thousand_topics}' : '') . '
+		GROUP BY hour',
+		array(
+			'current_member' => $memID,
+			'top_ten_thousand_topics' => $modSettings['totalTopics'] - 10000,
+			'time_offset' => (($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
+		)
+	);
+	$maxPosts = 0;
+	$context['posts_by_time'] = array();
+	while ($row = $smcFunc['db_fetch_assoc']($result))
+	{
+		// Cast as an integer to remove the leading 0.
+		$row['hour'] = (int) $row['hour'];
+
+		if ($row['post_count'] > $maxPosts)
+			$maxPosts = $row['post_count'];
+
+		$context['posts_by_time'][$row['hour']] = array(
+			'hour' => $row['hour'],
+			'posts_percent' => $row['post_count']
+		);
+	}
+	$smcFunc['db_free_result']($result);
+
+	if ($maxPosts > 0)
+		for ($hour = 0; $hour < 24; $hour++)
+		{
+			if (!isset($context['posts_by_time'][$hour]))
+				$context['posts_by_time'][$hour] = array(
+					'hour' => $hour,
+					'posts_percent' => 0,
+				);
+			else
+				$context['posts_by_time'][$hour]['posts_percent'] = round(($context['posts_by_time'][$hour]['posts_percent'] * 100) / $maxPosts);
+		}
+
+	// Put it in the right order.
+	ksort($context['posts_by_time']);
+]]></search>
+			<add><![CDATA[
+
+	// Posting [topic] activity by time.
+	$result = $smcFunc['db_query']('user_activity_by_time', '
+		SELECT
+			HOUR(FROM_UNIXTIME(m.poster_time + {int:time_offset})) AS hour,
+			COUNT(m.id_msg) AS post_count
+		FROM {db_prefix}messages AS m, {db_prefix}topics AS t
+		WHERE m.id_member = {int:current_member} AND m.id_msg = t.id_first_msg' . ($modSettings['totalMessages'] > 100000 ? '
+			AND m.id_topic > {int:top_ten_thousand_topics}' : '') . '
+		GROUP BY hour',
+		array(
+			'current_member' => $memID,
+			'top_ten_thousand_topics' => $modSettings['totalTopics'] - 10000,
+			'time_offset' => (($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
+		)
+	);
+	$maxPosts = 0;
+	$context['topics_by_time'] = array();
+	while ($row = $smcFunc['db_fetch_assoc']($result))
+	{
+		// Cast as an integer to remove the leading 0.
+		$row['hour'] = (int) $row['hour'];
+
+		if ($row['post_count'] > $maxPosts)
+			$maxPosts = $row['post_count'];
+
+		$context['topics_by_time'][$row['hour']] = array(
+			'hour' => $row['hour'],
+			'posts_percent' => $row['post_count']
+		);
+	}
+	$smcFunc['db_free_result']($result);
+
+	if ($maxPosts > 0)
+		for ($hour = 0; $hour < 24; $hour++)
+		{
+			if (!isset($context['topics_by_time'][$hour]))
+				$context['topics_by_time'][$hour] = array(
+					'hour' => $hour,
+					'posts_percent' => 0,
+				);
+			else
+				$context['topics_by_time'][$hour]['posts_percent'] = round(($context['topics_by_time'][$hour]['posts_percent'] * 100) / $maxPosts);
+		}
+
+	// Put it in the right order.
+	ksort($context['topics_by_time']);
+
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$sourcedir/Admin.php">
+		<operation>
+			<search position="before"><![CDATA[
+						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:]]></search>
+			<add><![CDATA[
+						'tcip' => array($txt['tcip_title']),]]></add>
+		</operation>
+	</file>
+
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="before"><![CDATA[
+		// Mod authors, once again, if you have a whole section to add do it AFTER this line, and keep a comma at the end.]]></search>
+			<add><![CDATA[
+		'tcip' => 'ModifytcipSettings',]]></add>
+		</operation>
+		<operation>
+			<search position="end"></search>
+			<add><![CDATA[
+function ModifytcipSettings($return_config = false)
+{
+	global $txt, $scripturl, $context, $settings, $sc;
+
+	$config_vars = array(
+		array('check', 'tcip_enabled'),
+		array('check', 'tcip_show_topic_count'),
+		array('check', 'tcip_show_participated_count'),
+	);
+
+
+	if ($return_config)
+		return $config_vars;
+
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		saveDBSettings($config_vars);
+		writeLog();
+
+		redirectexit('action=admin;area=modsettings;sa=tcip');
+	}
+
+	$context['post_url'] = $scripturl . '?action=admin;area=modsettings;save;sa=tcip';
+	$context['settings_title'] = $txt['tcip_title'];
+
+	prepareDBSettingContext($config_vars);
+}
+]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/Profile.template.php">
+		<operation>
+			<search position="before"><![CDATA[<dd>', $context['member']['posts'], ' (', $context['member']['posts_per_day'], ' ', $txt['posts_per_day'], ')</dd>';]]></search>
+			<add><![CDATA[
+
+	echo '
+				', $context['tcip_enabled'] && $context['tcip_show_topic_count'] ? '<dt>'. $txt['profile_topics_started']. ': </dt>
+				<dd>'. $context['member']['topics']. ' ('. $context['member']['topics_per_day']. ' '. $txt['posts_per_day']. ')</dd>
+				' : '', $context['tcip_enabled'] && $context['tcip_show_participated_count'] ? '<dt>'. $txt['profile_topics_participated']. ': </dt>
+				<dd>'. $context['member']['topic_count']. '</dd>' : '', '';
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[// Otherwise do!
+	else
+	{
+		echo '
+						<dl class="stats">';
+
+		// The labels.
+		foreach ($context['posts_by_time'] as $time_of_day)
+			echo '
+							<dt>', date('g a', mktime($time_of_day['hour'])), '</dt>
+							<dd class="statsbar">', !empty($time_of_day['posts_percent']) ? '<span class="left"></span><div style="width: ' . $time_of_day['posts_percent'] . 'px;" class="stats_bar"></div><span class="right"></span><span class="righttext">' . $time_of_day['posts_percent'] . '%</span>' : '', '</dd>';
+		echo '
+						</dl>';]]></search>
+			<add><![CDATA[
+
+	// Otherwise do!
+	else
+	{
+		echo '
+						<p align="center"><b>', $txt['tcip_posts'] ,'</b></p>
+						<dl class="stats">';
+
+		// The labels.
+		foreach ($context['posts_by_time'] as $time_of_day)
+			echo '
+							<dt>', date('g a', mktime($time_of_day['hour'])), '</dt>
+							<dd class="statsbar">', !empty($time_of_day['posts_percent']) ? '<span class="left"></span><div style="width: ' . $time_of_day['posts_percent'] . 'px;" class="stats_bar"></div><span class="right"></span><span class="righttext">' . $time_of_day['posts_percent'] . '%</span>' : '', '</dd>';
+		echo '
+						</dl>
+						<p align="center"><br /><b>', $txt['tcip_topics'] ,'</b></p>
+						<dl class="stats">';
+
+		// The labels.
+		foreach ($context['topics_by_time'] as $time_of_day)
+			echo '
+							<dt>', date('g a', mktime($time_of_day['hour'])), '</dt>
+							<dd class="statsbar">', !empty($time_of_day['posts_percent']) ? '<span class="left"></span><div style="width: ' . $time_of_day['posts_percent'] . 'px;" class="stats_bar"></div><span class="right"></span><span class="righttext">' . $time_of_day['posts_percent'] . '%</span>' : '', '</dd>';
+		echo '
+						</dl>';
+
+]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:Linkback</id>
+	<version>1.2</version>
+	
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="before"><![CDATA[			array('check', 'who_enabled'),]]></search>
+			<add><![CDATA[
+		'',
+			// Style of linkback.
+			array('select', 'linkbackStyle', array(&$txt['linkbackStyle_post'], &$txt['linkbackStyle_topic'])),]]></add>
+		</operation>
+	</file>
+	
+	<file name="$sourcedir/Display.php">
+		<operation>
+			<search position="after"><![CDATA[	// Run BBC interpreter on the message.]]></search>
+			<add><![CDATA[	// Add linkback
+	if(!empty($modSettings['linkbackStyle']) && $modSettings['linkbackStyle'] == 1) { // default to per post; 0 = post, 1 = topic
+		$message['body'] .= "\n\n[size=1]" . $txt['linkback'] . ': ' . $scripturl . ((!empty($modSettings['queryless_urls']) && $modSettings['queryless_urls']) ? '/topic,' . $topic . '.0.html' : '?topic=' . $topic . '.0') . '[/size]';
+	} else {
+		$message['body'] .= "\n\n[size=1]" . $txt['linkback'] . ': ' . $scripturl . ((!empty($modSettings['queryless_urls']) && $modSettings['queryless_urls']) ? '/topic,' . $topic . '.msg' . $message['id_msg'] . '.html#msg' . $message['id_msg'] : '?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg']) . '[/size]';
+	}
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['linkback_copy'],]]></add>
+		</operation>
+	</file>
+</modification>

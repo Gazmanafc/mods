@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:ncode_imageresizer</id>
+	<name>nCode Image Resizer</name>
+	<version>1.4</version>
+	<type>modification</type>
+	
+	<install for="2.0 - 2.99.99">
+		<modification>install.xml</modification>
+		<require-file name="ncode_imageresizer.js" destination="$themedir" />
+	</install>
+
+	<uninstall for="2.0 - 2.99.99">
+		<modification reverse="true">install.xml</modification>
+		<remove-file name="$themedir/ncode_imageresizer.js" />
+	</uninstall>
+</package-info>

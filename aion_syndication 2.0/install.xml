@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<id>Runic:Aion_Syndication</id>
+	<version>2.0</version>
+<file name="$themedir/index.template.php">
+		<operation>
+			<search position="after"><![CDATA[<script]]></search>
+			<add><![CDATA[<script src="http://www.aionarmory.com/js/extooltips.js" type="text/javascript"></script>
+	]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Subs-Editor.php">
+		<operation>
+			<search position="before"><![CDATA[array(
+				'image' => 'hr',
+				'code' => 'hr',
+				'before' => '[hr]',
+				'description' => $txt['horizontal_rule']
+			),
+]]></search>
+			<add><![CDATA[			array(),
+			array(
+				'image' => 'item',
+				'code' => 'item',
+				'before' => '[item]',
+				'after' => '[/item]',
+				'description' => $txt['bbc_code_aion_item']
+			),
+			array(
+				'image' => 'spell',
+				'code' => 'spell',
+				'before' => '[spell]',
+				'after' => '[/spell]',
+				'description' => $txt['bbc_code_aion_spell']
+			),
+			array(
+				'image' => 'quest',
+				'code' => 'quest',
+				'before' => '[quest]',
+				'after' => '[/quest]',
+				'description' => $txt['bbc_code_aion_quest']
+			),
+			array(
+				'image' => 'npc',
+				'code' => 'npc',
+				'before' => '[npc]',
+				'after' => '[/npc]',
+				'description' => $txt['bbc_code_aion_npc']
+			),
+			array(
+				'image' => 'recipe',
+				'code' => 'recipe',
+				'before' => '[recipe]',
+				'after' => '[/recipe]',
+				'description' => $txt['bbc_code_aion_recipe']
+			),
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Subs.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+function aion_get($type, &$params) {
+	global $db_prefix, $smcFunc;
+	if(isset($params['id'])) {
+		// numeric id, so populate name
+		$query = $smcFunc['db_query']('', 'SELECT name_en FROM {db_prefix}aion_' . $type . ' WHERE id = {int:id} ',
+			array(
+				'id' => (int) $params['id']
+			)
+		);
+		
+		$params['name'] = ($row = $smcFunc['db_fetch_row']($query)) ? $row[0] : aion_get_ajax($type, $params['id'], null);
+		$smcFunc['db_free_result']($query);
+	} else {
+		// textual, so populate id
+		$params['name'] = AionCleanName($params['name']);
+		$query = $smcFunc['db_query']('', 'SELECT id FROM {db_prefix}aion_' . $type . ' WHERE name_en LIKE {string:name} ',
+			array(
+				'name' => $params['name']
+			)
+		);
+		
+		$params['id'] = ($row = $smcFunc['db_fetch_row']($query)) ? $row[0] : aion_get_ajax($type, null, $params['name']);
+		$smcFunc['db_free_result']($query);
+	}
+}
+
+function updateAionCache($type, $id, $name) {
+	global $smcFunc;
+	$smcFunc['db_insert']('replace',
+		'{db_prefix}aion_' . $type,
+		array(
+			'id' => 'int',
+			'name_en' => 'string',
+		),
+		array(
+			$id, $name,
+		),
+		array('id')
+	);
+}
+
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[			array(
+				'tag' => 'abbr',]]></search>
+			<add><![CDATA[
+			array(
+				'tag' => 'item',
+				'type' => 'unparsed_content',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data = strtr($data, array(\'<br />\' => \'\'));
+					$tag[\'content\'] = aion_handler("item", "", $data);
+				'),
+			),
+			array(
+				'tag' => 'item',
+				'type' => 'unparsed_equals_content',
+				'test' => '(large|medium|small)\]',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data[0] = strtr($data[0], array(\'<br />\' => \'\'));
+					$tag[\'content\'] = aion_handler("item", $data[1], $data[0]);
+				'),
+			),
+			array(
+				'tag' => 'spell',
+				'type' => 'unparsed_content',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data = strtr($data, array(\'<br />\' => \'\'));
+					$tag[\'content\'] = aion_handler("spell", "", $data);
+				'),
+			),
+			array(
+				'tag' => 'spell',
+				'type' => 'unparsed_equals_content',
+				'test' => '(large|medium|small)\]',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data[0] = strtr($data[0], array(\'<br />\' => \'\'));
+					$tag[\'content\'] = aion_handler("spell", $data[1], $data[0]);
+				'),
+			),
+			array(
+				'tag' => 'quest',
+				'type' => 'unparsed_content',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data = strtr($data, array(\'<br />\' => \'\'));
+					$tag[\'content\'] = aion_handler("quest", "", $data);
+				'),
+			),
+			array(
+				'tag' => 'npc',
+				'type' => 'unparsed_content',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data = strtr($data, array(\'<br />\' => \'\'));
+					$tag[\'content\'] = aion_handler("npc", "", $data);
+				'),
+			),
+			array(
+				'tag' => 'recipe',
+				'type' => 'unparsed_content',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data = strtr($data, array(\'<br />\' => \'\'));
+					$tag[\'content\'] = aion_handler("recipe", "", $data);
+				'),
+			),
+			array(
+				'tag' => 'recipe',
+				'type' => 'unparsed_equals_content',
+				'test' => '(large|medium|small)\]',
+				'validate' => create_function('&$tag, &$data, $disabled', '
+					$data[0] = strtr($data[0], array(\'<br />\' => \'\'));
+					$tag[\'content\'] = aion_handler("recipe", $data[1], $data[0]);
+				'),
+			),
+]]></add>
+		</operation>
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+function aion_handler($linktype, $size, $content) {
+	$size = in_array($size, array('small', 'medium', 'large')) ? '-full-' . $size : '-text';
+	$id = (int) $content;
+	$params = ($id > 0) ? array('id' => $id) : array('name' => $content);
+	aion_get($linktype, $params);
+	return '<a class="aiondb-' . $linktype . $size . '" href="http://www.aionarmory.com/' . $linktype . '.aspx?id=' . $params['id'] . '" target="_blank">' . $params['name'] . '</a>';
+}
+
+function aion_get_ajax($type, $id = null, $name = null) {
+	$types = array('item' => 1, 'spell' => 6, 'quest' => 4, 'npc' => 2, 'recipe' => 131);
+	
+	if($id == null) {
+		if($name == null) {
+			return '';
+		}
+		$name = AionCleanName($name);
+		$rname = str_replace(array('%26quot%3B', '+'), array('%22', '%20'), urlencode($name));
+		$id = (int) getURL("http://www.aionarmory.com/ajaxIDLookup.aspx?type=" . $types[$type] . "&name=" . $rname);
+		if($id > 0)
+			updateAionCache($type, $id, $name);
+		return $id;
+	} else {
+		$id = (int) $id; // deal with both being null
+		$name = getURL("http://www.aionarmory.com/ajaxIDLookup.aspx?type=" . $types[$type] . "&id=" . $id);
+		if($name != "" && $name != "0") {
+			$name = AionCleanName($name);
+			updateAionCache($type, $id, $name);
+			return $name;
+		} else {
+			return '';
+		}
+	}
+}
+
+function getURL($url) {
+	$c = false;
+	$success = false;
+	$value = '';
+	if(function_exists('curl_init') && $c = @curl_init()) {
+		// attempt to use cURL
+		$options = array(
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => 1,
+			CURLOPT_CONNECTTIMEOUT => 3,
+			CURLOPT_USERAGENT => 'SMF Aion Syndication',
+		);
+		curl_setopt_array($c, $options);
+		$success = ($value = @curl_exec($c));
+		curl_close($c);
+	} else {
+		// attempt to use SMF own functions
+		global $sourcedir;
+		require_once($sourcedir . '/Subs-Package.php');
+		$success = ($value = fetch_web_data($url));
+	}
+	
+	if(!$success) {
+		// fall back to @file_get_contents
+		$value = @file_get_contents($url);
+	}
+
+	return $value;
+}
+
+function AionCleanName($name) {
+	return trim(stripslashes(str_replace('&#039;', "'", $name)));
+}
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['runic_aion'],]]></add>
+		</operation>
+	</file>
+</modification>

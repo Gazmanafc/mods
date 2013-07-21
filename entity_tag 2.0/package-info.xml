@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:Entity_BBCode</id>
+	<name>Entity BBcode</name>
+	<version>2.0</version>
+	<type>modification</type>
+	
+	<install for="2.0 - 2.0.99">
+		<modification type="file">install.xml</modification>
+		<modification type="file">english.xml</modification>
+		<modification type="file">english_british.xml</modification>
+		<require-file name="ent.gif" destination="$imagesdir/bbc" />
+		<require-file name="entn.gif" destination="$imagesdir/bbc" />
+	</install>
+	
+	<uninstall for="2.0 - 2.0.99">
+		<modification type="file" reverse="true">install.xml</modification>
+		<modification type="file" reverse="true">english.xml</modification>
+		<modification type="file" reverse="true">english_british.xml</modification>
+		<remove-file name="$imagesdir/bbc/ent.gif" /> 
+		<remove-file name="$imagesdir/bbc/entn.gif" /> 
+	</uninstall>
+</package-info>

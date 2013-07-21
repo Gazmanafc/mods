@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<name>Signature Area BBCode Buttons</name>
+	<id>runic:BBCodeBarForSignature</id>
+	<type>modification</type>
+	<version>2.0.3</version>
+
+	<install for="1.1.10 - 1.1.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<modification>install.xml</modification>
+		
+	</install>
+	<uninstall for="1.1.10 - 1.1.99">
+		<modification reverse="true">install.xml</modification>
+	</uninstall>
+	<install for="2.0 - 2.0.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<modification>install_2.0.xml</modification>
+		
+	</install>
+	<uninstall  for="2.0 - 2.0.99>
+		<modification reverse="true">install_2.0.xml</modification>
+	</uninstall>
+	
+	
+</package-info>

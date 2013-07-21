@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>runic:relative_dates</id>
+	<version>1.3</version>
+
+	<file name="$sourcedir/Subs.php">
+		<operation>
+			<search position="replace"><![CDATA[if ($then['yday'] == $now['yday'] && $then['year'] == $now['year'])
+			return $txt['today'] . timeformat($log_time, $today_fmt, $offset_type);]]></search>
+			<add><![CDATA[if ($then['yday'] == $now['yday'] && $then['year'] == $now['year'])
+		{
+			// SMF has room for relative dates, no?
+			if ($modSettings['todayMod'] == 3 && (empty($modSettings['enable_rt_xml']) && !isset($_REQUEST['xml']) || !empty($modSettings['enable_rt_xml']) && !isset($_REQUEST['xml'])))
+			{
+				// Determine the relative dates
+				$seconds = $nowtime - $time;
+				$minutes = floor($seconds / 60);
+				$hours = floor($minutes / 60);
+
+				// Numbers need language strings, too
+				if ($seconds > -1)
+				{
+					if ($hours > 0 && $minutes > 59)
+						$retVal = $hours . ' ' . ($hours == 1 ? $txt['hour'] : $txt['hours']) . '  ' . $txt['ago'];
+					elseif ($minutes > 0 && $seconds > 59)
+						$retVal = $minutes . ' ' . ($minutes == 1 ? $txt['minute'] : $txt['minutes']) . '  ' . $txt['ago'];
+					else
+						$retVal = $seconds . ' ' . ($seconds == 1 ? $txt['second'] : $txt['seconds']) . '  ' . $txt['ago'];
+				}
+				// Time is in the future so rework :P
+				else
+				{
+					$seconds = $time - $nowtime;
+					$minutes = floor($seconds / 60);
+					$hours = floor($minutes / 60);
+					if ($hours > 0 && $minutes > 59)
+						$retVal = $txt['in'] . '  ' . $hours . ' ' . ($hours == 1 ? $txt['hour'] : $txt['hours']);
+					elseif ($minutes > 0 && $seconds > 59)
+						$retVal = $txt['in'] . '  ' . $minutes . ' ' . ($minutes == 1 ? $txt['minute'] : $txt['minutes']);
+					else
+						$retVal = $txt['in'] . '  ' . $seconds . ' ' . ($seconds == 1 ? $txt['second'] : $txt['seconds']);
+				}
+			}
+			// Defaults FTW!
+			else
+				$retVal = $txt['today'] . timeformat($log_time, $today_fmt, $offset_type);
+
+			return $retVal;
+		}]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Who.php">
+		<operation>
+			<search position="replace" whitespace="loose"><![CDATA[		'mods' => array(]]></search>
+			<add><![CDATA[		'mods' => array( $txt['relativecopy'],]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/ManageSettings.php">
+		<operation>
+			<search position="before"><![CDATA[, $txt['yesterday_today']]]></search>
+			<add><![CDATA[, $txt['relative_today']]]></add>
+		</operation>
+	</file>
+</modification>

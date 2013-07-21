@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:Quick_Reply_Permission</id>
+	<version>1.2</version>
+	
+	<file name="$sourcedir/Display.php">
+		<operation>
+			<search position="after"><![CDATA[	// How much are we sticking on each page?]]></search>
+			<add><![CDATA[	if (!allowedTo('can_quick_reply'))
+		$options['display_quick_reply'] = 0;
+
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$sourcedir/ManagePermissions.php"><!-- add all the glorious permissions in an uber extensible way without screwing with Modifications.{language}.php (it's on EVERY page load, and every little helps) -->
+		<operation>
+			<search position="after"><![CDATA[	// We need to know what permissions we can't give to guests.]]></search>
+			<add><![CDATA[	$permissionList['membergroup']['can_quick_reply'] = array(false, 'qr', 'can_qr');
+
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/Profile.template.php">
+		<operation>
+			<search position="replace"><![CDATA[	echo '
+							<li>
+								<label for="display_quick_reply">', $txt['display_quick_reply'], '</label>
+								<select name="default_options[display_quick_reply]" id="display_quick_reply">
+									<option value="0"', empty($context['member']['options']['display_quick_reply']) ? ' selected="selected"' : '', '>', $txt['display_quick_reply1'], '</option>
+									<option value="1"', !empty($context['member']['options']['display_quick_reply']) && $context['member']['options']['display_quick_reply'] == 1 ? ' selected="selected"' : '', '>', $txt['display_quick_reply2'], '</option>
+									<option value="2"', !empty($context['member']['options']['display_quick_reply']) && $context['member']['options']['display_quick_reply'] == 2 ? ' selected="selected"' : '', '>', $txt['display_quick_reply3'], '</option>
+								</select>
+							</li>
+							<li>]]></search>
+			<add><![CDATA[	if (allowedTo('can_quick_reply'))
+		echo '
+							<li>
+								<label for="display_quick_reply">', $txt['display_quick_reply'], '</label>
+								<select name="default_options[display_quick_reply]" id="display_quick_reply">
+									<option value="0"', empty($context['member']['options']['display_quick_reply']) ? ' selected="selected"' : '', '>', $txt['display_quick_reply1'], '</option>
+									<option value="1"', !empty($context['member']['options']['display_quick_reply']) && $context['member']['options']['display_quick_reply'] == 1 ? ' selected="selected"' : '', '>', $txt['display_quick_reply2'], '</option>
+									<option value="2"', !empty($context['member']['options']['display_quick_reply']) && $context['member']['options']['display_quick_reply'] == 2 ? ' selected="selected"' : '', '>', $txt['display_quick_reply3'], '</option>
+								</select>
+							</li>';
+	echo '
+							<li>]]></add>
+		</operation>
+	</file>
+</modification>

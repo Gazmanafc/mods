@@ -1,0 +1,418 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>Runic:ssi_multiBoardNews</id>
+	<version>2.0</version>
+	
+	<file name="$boarddir/SSI.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// Arantor: ssi_multiBoardNews
+function ssi_multiBoardNews($parameters)
+{
+	global $scripturl, $db_prefix, $txt, $settings, $modSettings, $context, $smcFunc, $user_profile;
+	
+	loadLanguage('Stats');
+
+	// Load the message icons - the usual suspects.
+	$stable_icons = array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'wireless');
+	$icon_sources = array();
+	foreach ($stable_icons as $icon)
+		$icon_sources[$icon] = 'images_url';
+
+	$feed_types = array('rss', 'rdf', 'atom', 'none');
+	$attach_types = array('none', 'linkonly', 'thumbnail', 'inline');
+	$avatar_types = array('none', 'left', 'right');
+
+	// Checking off the parameters first
+	$parameters['limit'] = isset($parameters['limit']) ? max(1, (int) $parameters['limit']) : 5;
+	$parameters['start'] = isset($parameters['start']) ? max(0, (int) $parameters['start']) : 0;
+	$parameters['length'] = isset($parameters['length']) ? (int) $parameters['length'] : 0;
+	$parameters['perms_override'] = isset($parameters['perms_override']) ? (bool) $parameters['perms_override'] : false;
+	$parameters['attachments'] = isset($parameters['attachments']) ? (in_array($parameters['attachments'], $attach_types) ? $parameters['attachments'] : 'none') : 'none';
+	$parameters['avatar'] = isset($parameters['avatar']) ? (in_array($parameters['avatar'], $avatar_types) ? $parameters['avatar'] : 'none') : 'none';
+
+	$parameters['feed'] = isset($parameters['feed']) ? (array) $parameters['feed'] : array('none');
+	$parameters['feed'] = array_intersect($parameters['feed'], $feed_types);
+	if (count($parameters['feed']) == 0)
+		$parameters['feed'] = array('none');
+
+	$parameters['board'] = isset($parameters['board']) ? (array) $parameters['board'] : array(0);
+	$parameters['category'] = isset($parameters['category']) ? (array) $parameters['category'] : array(0);
+	$parameters['board_disp'] = isset($parameters['board_disp']) ? (bool) $parameters['board_disp'] : true;
+	$parameters['category_disp'] = isset($parameters['category_disp']) ? (bool) $parameters['category_disp'] : false;
+
+	$parameters['icon'] = isset($parameters['icon']) ? (array) $parameters['icon'] : array();
+	$parameters['icon'] = array_intersect(array_unique($parameters['icon']), $stable_icons);
+	
+	$parameters['output_type'] = isset($parameters['output_type']) ? ($parameters['output_type'] == 'echo' ? 'echo' : 'array') : 'echo';
+	
+	foreach ($parameters['board'] as $key => $value)
+	{
+		$value = (int) $value;
+		if ($value < 1)
+			unset ($parameters['board'][$key]);
+		else
+			$parameters['board'][$key] = (int) $value;
+	}
+	
+	if (!empty($parameters['category']))
+	{
+		$parameters['category'] = array_unique((array) $parameters['category']);
+		foreach ($parameters['category'] as $key => $value)
+		{
+			$value = (int) $value;
+			if ($value < 1)
+				unset ($parameters['category'][$key]);
+			else
+				$parameters['category'][$key] = (int) $value;
+		}
+		
+		if (count($parameters['category']) > 0)
+		{
+			$query = db_query("SELECT ID_BOARD FROM {$db_prefix}boards WHERE ID_CAT IN (" . implode(', ', $parameters['category']) . ")", __FILE__, __LINE__);
+			while($row = mysql_fetch_row($query))
+				$parameters['board'][] = $row[0];
+			
+			mysql_free_result($query);
+		}
+	}
+	
+	$parameters['board'] = array_unique($parameters['board']);
+
+	if (count($parameters['board']) == 0)
+		$parameters['board'] = array(0);
+	
+	if (!$parameters['perms_override'])
+	{
+		// So we're checking the guest perms here. Note this can only be done from a PHP call.
+		// You can't do this from an external SSI type include (via $_GET) for obvious reasons!
+		
+		$board_count = count($parameters['board']);
+		
+		$board_limit = 1;
+		$where = 'FIND_IN_SET(-1, memberGroups)';
+		if ($board_count > 1)
+		{
+			$where = 'ID_BOARD IN (' . implode(', ', $parameters['board']) . ') AND ' . $where;
+			$board_limit = $board_count;
+		}
+		
+		// So, either get all boards we asked for and check their membergroups,
+		// or we asked for nothing, so get the first board you find that is guest safe
+		
+		$request = db_query("SELECT ID_BOARD FROM {$db_prefix}boards WHERE " . $where . " LIMIT " . $board_limit, __FILE__, __LINE__);
+		if (mysql_num_rows($request) == 0)
+		{
+			if ($output_method == 'echo')
+				die($txt['ssi_no_guests']);
+			else
+				return array();
+		}
+		
+		$allowed_boards = array();
+		while($row = mysql_fetch_row($request))
+			$allowed_boards[] = $row[0];
+		mysql_free_result($request);
+		
+		if ($board_count > 0)
+			$parameters['board'] = array_intersect($parameters['board'], $allowed_boards);
+		else
+			$parameters['board'] = $allowed_boards;
+
+		if (count($parameters['board']) == 0)
+			$parameters['board'] = array(0);
+	}
+	
+	$icon = count($parameters['icon']) > 0 ? 'AND m.icon IN ("' . implode('", "', $parameters['icon']) . '")': '';
+
+	// Find the post ids.
+	$request = db_query("
+		SELECT ID_FIRST_MSG, icon
+		FROM {$db_prefix}topics AS t INNER JOIN {$db_prefix}messages AS m ON (t.ID_FIRST_MSG = m.ID_MSG)
+		WHERE t.ID_BOARD IN (" . implode(', ', $parameters['board']) . ")
+		{$icon}
+		ORDER BY ID_FIRST_MSG DESC
+		LIMIT " . $parameters['start'] . ", " . $parameters['limit'], __FILE__, __LINE__);
+	$posts = array();
+	while ($row = mysql_fetch_assoc($request))
+		$posts[] = $row['ID_FIRST_MSG'];
+	mysql_free_result($request);
+
+	if (empty($posts))
+		return array();
+
+	// Find the posts.
+	$request = db_query("
+		SELECT
+			m.icon, m.subject, m.body, IFNULL(mem.realName, m.posterName) AS poster_name, m.posterTime,
+			t.numReplies, t.ID_TOPIC, m.ID_MEMBER, m.smileysEnabled, m.ID_MSG, t.locked, t.ID_BOARD, b.name AS board_name, c.ID_CAT, c.name AS cat_name
+		FROM {$db_prefix}topics AS t
+			INNER JOIN {$db_prefix}messages AS m ON (m.ID_MSG = t.ID_FIRST_MSG)
+			LEFT JOIN {$db_prefix}members AS mem ON (mem.ID_MEMBER = m.ID_MEMBER)
+			INNER JOIN {$db_prefix}boards AS b ON (t.ID_BOARD = b.ID_BOARD)
+			INNER JOIN {$db_prefix}categories AS c ON (b.ID_CAT = c.ID_CAT)
+		WHERE t.ID_FIRST_MSG IN (" . implode(', ', $posts) . ")
+		ORDER BY t.ID_FIRST_MSG DESC
+		LIMIT " . count($posts), __FILE__, __LINE__);
+	$return = array();
+	$posters = array();
+	$messages = array();
+	$last = 0;
+	while ($row = mysql_fetch_assoc($request))
+	{
+		// If we want to limit the length of the post.
+		if ($parameters['length'] > 0 && $func['strlen']($row['body']) > $parameters['length'])
+		{
+			$row['body'] = $func['substr']($row['body'], 0, $parameters['length']);
+
+			// The first space or line break. (<br />, etc.)
+			$cutoff = max(strrpos($row['body'], ' '), strrpos($row['body'], '<'));
+
+			if ($cutoff !== false)
+				$row['body'] = $func['substr']($row['body'], 0, $cutoff);
+			$row['body'] .= '...';
+		}
+
+		$row['body'] = parse_bbc($row['body'], $row['smileysEnabled'], $row['ID_MSG']);
+
+		// Check that this message icon is there...
+		if (empty($modSettings['messageIconChecks_disable']) && !isset($icon_sources[$row['icon']]))
+			$icon_sources[$row['icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['icon'] . '.gif') ? 'images_url' : 'default_images_url';
+
+		censorText($row['subject']);
+		censorText($row['body']);
+
+		$return['topics'][$row['ID_TOPIC']] = array(
+			'id' => $row['ID_TOPIC'],
+			'board' => array(
+				'id' => $row['ID_BOARD'],
+				'name' => $row['board_name'],
+				'href' => $scripturl . '?board=' . $row['ID_BOARD'] . '.0',
+				'link' => '<a href="' . $scripturl . '?topic=' . $row['ID_BOARD'] . '.0">' . $row['board_name'] . '</a>',
+			),
+			'category' => array(
+				'id' => $row['ID_CAT'],
+				'name' => $row['cat_name'],
+				'href' => $scripturl . '#c' . $row['ID_CAT'],
+				'link' => '<a href="' . $scripturl . '#c' . $row['ID_CAT'] . '">' . $row['cat_name'] . '</a>',
+			),
+			'message_id' => $row['ID_MSG'],
+			'icon' => '<img src="' . $settings[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" align="middle" alt="' . $row['icon'] . '" border="0" />',
+			'subject' => $row['subject'],
+			'time' => timeformat($row['posterTime']),
+			'timestamp' => forum_time(true, $row['posterTime']),
+			'body' => $row['body'],
+			'href' => $scripturl . '?topic=' . $row['ID_TOPIC'] . '.0',
+			'link' => '<a href="' . $scripturl . '?topic=' . $row['ID_TOPIC'] . '.0">' . $row['numReplies'] . ' ' . ($row['numReplies'] == 1 ? $txt['smf_news_1'] : $txt['smf_news_2']) . '</a>',
+			'replies' => $row['numReplies'],
+			'comment_href' => !empty($row['locked']) ? '' : $scripturl . '?action=post;topic=' . $row['ID_TOPIC'] . '.' . $row['numReplies'] . ';num_replies=' . $row['numReplies'],
+			'comment_link' => !empty($row['locked']) ? '' : '<a href="' . $scripturl . '?action=post;topic=' . $row['ID_TOPIC'] . '.' . $row['numReplies'] . ';num_replies=' . $row['numReplies'] . '">' . $txt['smf_news_3'] . '</a>',
+			'new_comment' => !empty($row['locked']) ? '' : '<a href="' . $scripturl . '?action=post;topic=' . $row['ID_TOPIC'] . '.' . $row['numReplies'] . '">' . $txt['smf_news_3'] . '</a>',
+			'poster' => array(
+				'id' => $row['ID_MEMBER'],
+				'name' => $row['poster_name'],
+				'href' => !empty($row['ID_MEMBER']) ? $scripturl . '?action=profile;u=' . $row['ID_MEMBER'] : '',
+				'link' => !empty($row['ID_MEMBER']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['ID_MEMBER'] . '">' . $row['poster_name'] . '</a>' : $row['poster_name']
+			),
+			'locked' => !empty($row['locked']),
+			'is_last' => false,
+		);
+		$posters[$row['ID_MEMBER']][] = $row['ID_TOPIC'];
+		$messages[] = $row['ID_MSG'];
+		$last = $row['ID_TOPIC'];
+	}
+
+	mysql_free_result($request);
+	
+	// Get all the attachments, but only if we actually want them
+	if ($parameters['attachments'] != 'none' && !empty($modSettings['attachmentEnable']) && count(array_intersect($parameters['board'], boardsAllowedTo('view_attachments'))) > 0)
+	{
+		$request = db_query("
+			SELECT
+				a.ID_ATTACH, a.ID_MSG, a.filename, IFNULL(a.size, 0) AS filesize, a.downloads,
+				a.width, a.height, IFNULL(thumb.ID_ATTACH, 0) AS ID_THUMB, thumb.width AS thumb_width, thumb.height AS thumb_height, m.ID_TOPIC
+			FROM {$db_prefix}attachments AS a
+			LEFT JOIN {$db_prefix}attachments AS thumb ON (thumb.ID_ATTACH = a.ID_THUMB)
+			INNER JOIN {$db_prefix}messages AS m ON (a.ID_MSG = m.ID_MSG)
+			WHERE a.ID_MSG IN (" . implode(', ', $messages) . ")
+				AND a.attachmentType = 0", __FILE__, __LINE__);
+		$temp = array();
+		while ($row = mysql_fetch_assoc($request))
+		{
+			$temp[$row['ID_ATTACH']] = $row;
+			if (!isset($attachments[$row['ID_MSG']]))
+				$attachments[$row['ID_MSG']] = array();
+		}
+		mysql_free_result($request);
+
+		// This is better than sorting it with the query...
+		ksort($temp);
+
+		foreach ($temp as $attach_single)
+		{
+			$attachment = array(
+				'href' => $scripturl . '?action=dlattach;topic=' . $attach_single['ID_TOPIC'] . '.0;attach=' . $attach_single['ID_ATTACH'],
+				'filename' => htmlspecialchars($attach_single['filename']),
+				'filesize' => round($attach_single['filesize'] / 1024, 2) . ' ' . $txt['smf211'],
+				'width' => $attach_single['width'],
+				'height' => $attach_single['height'],
+				'imgsize' => $attach_single['width'] > 0 ? $attach_single['width'] . 'x' . $attach_single['height'] : '',
+				'downloads' => $txt['attach_viewed'] . ' ' . $attach_single['downloads'] . ' ' . $txt['attach_times'],
+			);
+			$attachment['thumbnail'] = $attach_single['ID_THUMB'] == 0 ? false : array(
+				'href' => $scripturl . '?action=dlattach;topic=' . $attach_single['ID_TOPIC'] . '.0;attach=' . $attach_single['ID_THUMB'] . ';image',
+				'width' => $attach_single['thumb_width'],
+				'height' => $attach_single['thumb_height'],
+			);
+			$return['topics'][$attach_single['ID_TOPIC']]['attachments'][] = $attachment;
+		}
+	}
+	
+	// Get all the avatars, but only if we actually want them, then attach to the posts!
+	if ($parameters['avatar'] != 'none')
+	{
+		if ($modSettings['avatar_action_too_large'] == 'option_html_resize' || $modSettings['avatar_action_too_large'] == 'option_js_resize')
+		{
+			$avatar_width = !empty($modSettings['avatar_max_width_external']) ? ' width="' . $modSettings['avatar_max_width_external'] . '"' : '';
+			$avatar_height = !empty($modSettings['avatar_max_height_external']) ? ' height="' . $modSettings['avatar_max_height_external'] . '"' : '';
+		}
+		else
+		{
+			$avatar_width = '';
+			$avatar_height = '';
+		}
+		
+		$poster_ids = loadMemberData(array_keys($posters));
+		foreach ($poster_ids as $member)
+		{
+			$topic = $posters[$member]; // to get back to $return
+			$profile = $user_profile[$member];
+			$avatar = array(
+				'image' => $profile['avatar'] == '' ? ($profile['ID_ATTACH'] > 0 ? '<img src="' . (empty($profile['attachmentType']) ? $scripturl . '?action=dlattach;attach=' . $profile['ID_ATTACH'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) . '" alt="" class="avatar" border="0" />' : '') : (stristr($profile['avatar'], 'http://') ? '<img src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . ' alt="" class="avatar" border="0" />' : '<img src="' . $modSettings['avatar_url'] . '/' . htmlspecialchars($profile['avatar']) . '" alt="" class="avatar" border="0" />'),
+				'href' => $profile['avatar'] == '' ? ($profile['ID_ATTACH'] > 0 ? (empty($profile['attachmentType']) ? $scripturl . '?action=dlattach;attach=' . $profile['ID_ATTACH'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) : '') : (stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar']),
+			);
+			
+			if ($avatar['href'] > '')			
+				foreach ($topic as $tid)
+					$return['topics'][$tid]['poster']['avatar'] = $avatar;
+			
+		}
+	}
+
+	if (empty($return))
+		return $return;
+
+	$return['topics'][$last]['is_last'] = true;
+	
+	$return['feed'] = array();
+	
+	if (in_array('rss', $parameters['feed']))
+		$return['feed']['RSS'] = array(
+			'href' => $scripturl . '?action=.xml;sa=news;type=rss;boards=' . implode(',', $parameters['board']),
+			'link' => '<a href="' . $scripturl . '?action=.xml;sa=news;type=rss;boards=' . implode(',', $parameters['board']) . '">RSS</a>',
+		);
+
+	if (in_array('rdf', $parameters['feed']))
+		$return['feed']['RDF'] = array(
+			'href' => $scripturl . '?action=.xml;sa=news;type=rdf;boards=' . implode(',', $parameters['board']),
+			'link' => '<a href="' . $scripturl . '?action=.xml;sa=news;type=rdf;boards=' . implode(',', $parameters['board']) . '">RDF</a>',
+		);
+	
+	if (in_array('atom', $parameters['feed']))
+		$return['feed']['Atom'] = array(
+			'href' => $scripturl . '?action=.xml;sa=news;type=atom;boards=' . implode(',', $parameters['board']),
+			'link' => '<a href="' . $scripturl . '?action=.xml;sa=news;type=atom;boards=' . implode(',', $parameters['board']) . '">Atom</a>',
+		);
+
+	if ($parameters['output_type'] != 'echo')
+		return $return;
+
+	foreach ($return['topics'] as $news)
+	{
+		if ($parameters['avatar'] != 'none' && isset($news['poster']['avatar']))
+			$news['body'] = '<img class="ssi_avatar" src="' . $news['poster']['avatar']['href'] . '" style="margin:0 1em 1em 1em; float: ' . $parameters['avatar'] . '" />' . $news['body'];
+
+		echo '
+			<div>
+				', ($parameters['category_disp'] ? '[' . $news['category']['link'] . ']' : ''), ($parameters['board_disp'] ? ' [' . $news['board']['link'] . ']' : ''), ' <a href="', $news['href'], '">', $news['icon'], '</a> <strong>', $news['subject'], '</strong>
+				<div class="smaller">', $news['time'], ' ', $txt[525], ' ', $news['poster']['link'], '</div>
+
+				<div class="post" style="padding: 2ex 0;">', $news['body'], '</div>
+
+				', ($parameters['perms_override'] ? '' : $news['link'] . ($news['locked'] ? '' : ' | ' . $news['comment_link'])), '
+			</div>';
+
+		if (!empty($news['attachments'])) {
+			$count = count($news['attachments']);
+			if ($count > 0) {
+				switch($parameters['attachments'])
+				{
+					case 'linkonly':
+						echo '			<ul>';
+						foreach ($news['attachments'] as $attach)
+							echo '
+				<li><a target="_blank" href="', $attach['href'], '">', $attach['filename'], '</a> (', ($attach['imgsize'] != '' ? $attach['imgsize'] . ', ' : ''), $attach['filesize'], ')</li>';
+						echo '
+			</ul>';
+						break;
+					case 'thumbnail':
+						foreach ($news['attachments'] as $attach)
+						{
+							echo '
+			<div style="float:left; display:block;">';
+						if ($attach['thumbnail'])
+							echo '
+				<img src="', $attach['thumbnail']['href'], '" width="', $attach['thumbnail']['width'], '" height="', $attach['thumbnail']['height'], '" />';
+						echo '
+				<ul>
+					<li><a target="_blank" href="', $attach['href'], '">', $attach['filename'], '</a></li>
+					<li>', $attach['filesize'], ($attach['imgsize'] != '' ? ', ' . $attach['imgsize'] : ''), '</li>
+				</ul>';
+				echo '
+			</div>';
+						}
+						break;
+					case 'inline':
+						foreach ($news['attachments'] as $attach)
+						{
+							echo '
+			<div style="float:left; display:block;">';
+						if ($attach['width'] > 0)
+							echo '
+				<img src="', $attach['href'], '" width="', $attach['width'], '" height="', $attach['height'], '" />';
+						echo '
+				<ul>
+					<li><a target="_blank" href="', $attach['href'], '">', $attach['filename'], '</a></li>
+					<li>', ($attach['imgsize'] != '' ? $attach['imgsize'] . ', ' : ''), $attach['filesize'], '</li>
+				</ul>
+			</div>';
+						}
+						break;
+				}
+			}
+		}
+
+		if (!$news['is_last'])
+			echo '
+			<hr style="margin: 2ex 0; clear:left;" width="100%" />';
+	}
+	
+	// Now, what about feeds
+
+	if (count($return['feed']) > 0)
+	{
+		$feeds = array();
+		foreach ($return['feed'] as $feed)
+			$feeds[] = $feed['link'];
+		echo '
+			<hr style="margin: 2ex 0;" width="100%" />
+			<div class="smalltext">', implode(' | ', $feeds), '</div>';
+	}
+
+}
+]]></add>
+		</operation>
+	</file>
+</modification>
